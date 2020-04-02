@@ -1,0 +1,3 @@
+AzureResCmds.txt - commands needed to create resources for C19Quarantine.org
+============================================================================
+

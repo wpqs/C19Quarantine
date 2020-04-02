@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29709.97
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C19QuarantineWebApp", "C19QuarantineWebApp\C19QuarantineWebApp.csproj", "{7999BA58-DBC7-4208-A96C-04DB4844492D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{322995F5-7667-4743-964E-D9AF0BE49BA0}"
+	ProjectSection(SolutionItems) = preProject
+		AzureResCmds.txt = AzureResCmds.txt
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7999BA58-DBC7-4208-A96C-04DB4844492D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7999BA58-DBC7-4208-A96C-04DB4844492D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7999BA58-DBC7-4208-A96C-04DB4844492D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7999BA58-DBC7-4208-A96C-04DB4844492D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {13EEFD04-7CA1-4406-8150-5459DE737372}
+	EndGlobalSection
+EndGlobal
