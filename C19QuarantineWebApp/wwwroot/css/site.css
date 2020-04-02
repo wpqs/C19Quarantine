@@ -43,7 +43,10 @@ html {
 }
 
 .box-shadow {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+    /* ReSharper disable once CssBrowserCompatibility */
+    box-shadow: 0 .25rem .75rem #000000;
+    /* ReSharper disable once CssBrowserCompatibility */
+    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
 }
 
 button.accept-policy {

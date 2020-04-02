@@ -1,3 +1,7 @@
 AzureResCmds.txt - commands needed to create resources for C19Quarantine.org
 ============================================================================
 
+az account set --subscription Kisscode
+az group create --name resC19Q --location "WestEurope"
+az appservice plan create --name C19QPlan --resource-group resC19Q --location "WestEurope" --sku FREE
+az webapp create --name C19QuarantineWebApp --plan C19QPlan --resource-group resC19Q

@@ -3,12 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29709.97
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C19QuarantineWebApp", "C19QuarantineWebApp\C19QuarantineWebApp.csproj", "{7999BA58-DBC7-4208-A96C-04DB4844492D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "C19QuarantineWebApp", "C19QuarantineWebApp\C19QuarantineWebApp.csproj", "{7999BA58-DBC7-4208-A96C-04DB4844492D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{322995F5-7667-4743-964E-D9AF0BE49BA0}"
 	ProjectSection(SolutionItems) = preProject
 		AzureResCmds.txt = AzureResCmds.txt
+		References.txt = References.txt
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C19QCalcLib", "C19QCalcLib\C19QCalcLib.csproj", "{85A935A2-A2FE-454D-B071-CC296AFDB6D1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C19QCalcLibTest", "C19QCalcLibTest\C19QCalcLibTest.csproj", "{CDFF8BF2-6A21-4AAE-8A95-337C36FEDA83}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,6 +25,14 @@ Global
 		{7999BA58-DBC7-4208-A96C-04DB4844492D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7999BA58-DBC7-4208-A96C-04DB4844492D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7999BA58-DBC7-4208-A96C-04DB4844492D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{85A935A2-A2FE-454D-B071-CC296AFDB6D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{85A935A2-A2FE-454D-B071-CC296AFDB6D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{85A935A2-A2FE-454D-B071-CC296AFDB6D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{85A935A2-A2FE-454D-B071-CC296AFDB6D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDFF8BF2-6A21-4AAE-8A95-337C36FEDA83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDFF8BF2-6A21-4AAE-8A95-337C36FEDA83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDFF8BF2-6A21-4AAE-8A95-337C36FEDA83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDFF8BF2-6A21-4AAE-8A95-337C36FEDA83}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
