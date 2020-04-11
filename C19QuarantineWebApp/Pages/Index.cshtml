@@ -5,17 +5,58 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p style="background-color: red; color: white">WARNING: This website has not been validated and is not currently suitable for calculating your quarantine period for Covid-19.</p>
-    
-    <h3>About</h3>
-    <p>This website aims to calculate your quarantine period for Covid-19. It will ask you a series of questions and then calculate the number of days that you should remain in quarantine. </p>
-    <button>Start</button>
-    
-    <p>Result = @Model.DaysInQuarantine</p>
-    <hr/>
-    <h3>Useful links</h3>
-    <ul>
-        <li><a href="https://www.gov.uk/coronavirus" target="_blank">https://www.gov.uk/coronavirus</a></li>
-    </ul>
+    <div align="left">
+        <p>This website aims to calculate your self-isolation period for Covid-19 as recommended by the UK National Health Service (NHS) for people who are not in a group considered at risk. 
+            The <a href="https://www.cdc.gov/coronavirus/2019-ncov/downloads/COVID-19_CAREKit_ENG.pdf" target="_blank"> US CDC booklet for Covid-19 Care</a>&nbsp;provides a form for recording your symptoms and temperature over a 14 period. We recommend that you use this form or something similar to keep an accurate record
+            of your health whilst in self-isolation.</p>
+        <hr/>
+        <p style="background-color: red; color: white" align="center">WARNING: This website has not been validated and is not currently suitable for calculating your self-isolation period for Covid-19.</p>
+
+        <div class="row">
+            <div class="col-md-4">
+                <form method="post">
+                    <div class="form-group">
+                        <label for="StartQuarantine" class="col-form-label">When did you start self-isolation? (see note 1)</label>
+                        <input class="form-control"  asp-for="StartQuarantine" />
+                    </div>
+                    <div class="form-group">
+                        <label for="StartSymptoms" class="col-form-label">When did symptoms first start? (see note 2)</label>
+                        <input class="form-control" asp-for="StartSymptoms"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="Temperature" class="col-form-label">What is your temperature now in oC (see note 3)</label>
+                        <input class="form-control" asp-for="Temperature"  />
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Calculate" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+        <p><b><span style="color:@Model.TextColour">@Model.Result</span></b></p>
+
+        <hr/>
+        
+        <h5>Notes</h5>
+        <ol>
+            <li> The time you started self-isolation must be given in 24 hour format like 01-01-20 17:30. It may be the same as when your symptoms first started, or it may be when you entered self-isolation because of contact with someone with Covid-19.</li>
+            <li>Leave time when symptoms started empty if you have not had any symptoms since the start of self-isolation, otherwise give it in 24 hour format like 01-01-20 17:30.</li>
+            <li>The value we use for determining high temperature is <b>greater than or equal to 38.0 degrees celsius (oC)</b> as recorded by an oral thermometer. This value is given in the <a href="https://www.nhs.uk/common-health-questions/accidents-first-aid-and-treatments/how-do-i-take-someones-temperature/" target="_blank">NHS First Aid Advice</a>&nbsp;and
+                <a href="https://www.cdc.gov/coronavirus/2019-ncov/downloads/COVID-19_CAREKit_ENG.pdf" target="_blank">US CDC guidance</a>. However, you should appreciate that it's not always easy to take a temperature accurately. Therefore if you feel hot or shivery you may have a high temperature even if a thermometer says your temperature is below 38 degrees celsius. In this case
+                enter '39.0 oC' as your temperature.
+            </li>
+        </ol>
+        <hr/>
+        <h3>Useful links</h3>
+        <ul>
+            <li><a href="https://www.nhs.uk/conditions/coronavirus-covid-19/self-isolation-advice/" target="_blank">UK NHS Coronavirus-covid-19 - self-isolation-advice</a></li>
+            <li><a href="https://www.gov.uk/government/publications/covid-19-stay-at-home-guidance/stay-at-home-guidance-for-households-with-possible-coronavirus-covid-19-infection" target="_blank">UK Govn Stay at Home Guideance for Households with possible Coronavirus-covid-19 infection</a></li>
+            <li><a href="https://www.nhs.uk/common-health-questions/accidents-first-aid-and-treatments/how-do-i-take-someones-temperature/" target="_blank">UK NHS First Aid Advice - How do I take someone's temperature?</a></li>
+            <li><a href="https://www.cdc.gov/coronavirus/2019-ncov/downloads/COVID-19_CAREKit_ENG.pdf" target="_blank">US Center for Disease Control and Prevention (CDC) Covid-19 Care Kit booklet (PDF)</a></li>
+        </ul>
+    </div>
 </div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

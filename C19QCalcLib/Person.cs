@@ -4,9 +4,22 @@ namespace C19QCalcLib
 {
     public class Person
     {
-        public string Name { get; set; }
-        public DateTime Start { get; set; }
-        public DateTime? FirstSymptoms { get; set; }
-        public DateTime? Recovery { get; set; }
+        public string Name { get; private set; }
+        public DateTime QuarantineStarted { get; private set; }
+        public DateTime? FirstSymptoms { get; private set; }
+        public double Temperature { get; private set; }
+
+        public Person()
+        {
+            QuarantineStarted = DateTime.Now;
+        }
+
+        public Person(string name, DateTime quarantineStarted, double temp, DateTime? firstSymptoms=null)
+        {
+            Name = name;
+            QuarantineStarted = quarantineStarted;
+            Temperature = temp;
+            FirstSymptoms = firstSymptoms;
+        }
     }
 }

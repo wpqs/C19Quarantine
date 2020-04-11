@@ -1,0 +1,32 @@
+ToDo List
+=========
+
+1. done - Generate Test data for CalcUk.GetDaysInQuarantine()
+
+2. Update Index Page
+    Display fields - start of self-iso, start of symptoms, current temperature
+    Calculate button
+	Result field in table - days remaining in quarantine for each member of the household - red > 0, green 0
+
+3. Implement CalcUk.GetDaysInQuarantine()
+
+6. Implement Unit tests for CalcUk.GetDaysInQuarantine()
+
+7. Publish and functionally test with Test Data
+
+8. Request validation 
+
+8. Enhancements
+	Implement SSL (free)
+	Implement About page
+		link to https://helpwithcovid.com/projects/527-when-can-i-stop-self-quarantine
+		list of team members
+	Implement Licence page
+		Disclaimer
+	Add standard footer
+
+9. Obtain validation 
+	Remove warning banner
+	Add validation logo
+
+10. Publish 1.1.30.0
