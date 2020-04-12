@@ -8,6 +8,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{322995F5-7667-4743-964E-D9AF0BE49BA0}"
 	ProjectSection(SolutionItems) = preProject
 		AzureResCmds.txt = AzureResCmds.txt
+		Bugs.txt = Bugs.txt
 		References.txt = References.txt
 		Docs\TestData-SinglePerson-0.jpg = Docs\TestData-SinglePerson-0.jpg
 		ToDo.txt = ToDo.txt

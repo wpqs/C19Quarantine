@@ -9,11 +9,6 @@ namespace C19QCalcLib
         public DateTime? FirstSymptoms { get; private set; }
         public double Temperature { get; private set; }
 
-        public Person()
-        {
-            QuarantineStarted = DateTime.Now;
-        }
-
         public Person(string name, DateTime quarantineStarted, double temp, DateTime? firstSymptoms=null)
         {
             Name = name;
