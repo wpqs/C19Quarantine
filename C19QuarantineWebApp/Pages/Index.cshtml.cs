@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Globalization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
-
 using C19QCalcLib;
-using Microsoft.AspNetCore.Mvc;
 
 namespace C19QuarantineWebApp.Pages
 {
     public class IndexModel : PageModel
     {
-        public string Result { get; set; }
-        public string TextColour { get; set; }
+        public string Result { get; private set; }
+        public string TextColor { get; private set; }
 
         public string StartQuarantine { get; set; }
         public string StartSymptoms { get; set; }
@@ -19,13 +15,12 @@ namespace C19QuarantineWebApp.Pages
 
         public void OnGet()
         {
-            TextColour = "black";
+            TextColor = "black";
             Result = $"To calculate the number of days that you must remain in self-isolation provide the above data and then click the calculate button.";
             try
             {
-                TimeZoneInfo cstZone = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
-                var now = TimeZoneInfo.ConvertTime(DateTimeOffset.UtcNow, cstZone);
-                StartQuarantine = now.ToString(UiValidation.DateTimeFormat);
+                var nowUtc = DateTime.UtcNow;
+                StartQuarantine = nowUtc.ConvertUtcToLocalTime(UiValidation.DateTimeFormat, "GMT Standard Time");
                 Temperature = $"0.0 {UiValidation.DegreesCelsiusSymbol}";
             }
             catch (Exception e)
@@ -36,28 +31,25 @@ namespace C19QuarantineWebApp.Pages
 
         public void OnPost(string startQuarantine, string startSymptoms, string temperature)
         {
-            TextColour = "red";
+            TextColor = "red";
             try
             {
-                TimeZoneInfo cstZone = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
-                var now = TimeZoneInfo.ConvertTime(DateTimeOffset.UtcNow, cstZone);
-
                 var validation = new UiValidation();
-                if ((Result = validation.GetFormErrors(startQuarantine, startSymptoms, temperature)) == null)
+                if ((Result = validation.ProcessForm(startQuarantine, startSymptoms, temperature, "GMT Standard Time", "en-GB")) == null)
                 {
                     var person = new Person("Fred", validation.SelfIsolationTime, validation.TemperatureValue, validation.SymptomsTime);
                     var calc = new CalcUk(person);
-                    var days = calc.GetDaysInQuarantine(now.DateTime);
-                    if (days < 0)
+                    var span = calc.GetSpanInQuarantine(DateTime.UtcNow);
+                    if (span.IsError())
                         Result = $"Program error 101: An internal error has been detected. Please report this problem and try again";
-                    else if (days > 0)
+                    else if (span.TotalHours > 0)
                     {
-                        TextColour = "orange";
-                        Result = $"You need to remain in self-isolation for another {days} DAYS unless you have been advised otherwise";
+                        TextColor = "orange";
+                        Result = $"You need to remain in self-isolation for another {span.ToStringDaysMinSec()} unless you have been advised otherwise";
                     }
                     else
                     {
-                        TextColour = "green";
+                        TextColor = "green";
                         Result = $"Your self-isolation is now COMPLETE unless you have been advised otherwise";
                     }
                 }

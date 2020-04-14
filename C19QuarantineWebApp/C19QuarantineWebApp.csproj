@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Version>1.0.30.3</Version>
+    <Version>1.0.30.4</Version>
     <Authors>Will Stott</Authors>
     <Company>Maximodex</Company>
     <Product>C19Quarantine</Product>
@@ -11,6 +11,10 @@
     <NeutralLanguage>en</NeutralLanguage>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.1" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\C19QCalcLib\C19QCalcLib.csproj" />

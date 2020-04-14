@@ -1,183 +1,113 @@
-﻿using System;
-using C19QCalcLib;
+﻿using C19QCalcLib;
 using Xunit;
 
 namespace C19QCalcLibTest
 {
-    public class UIValidationTest
+    public class UiValidationTest
     {
         [Fact]
         public void NoErrorWithSymptoms()
         {
             var validation = new UiValidation();
-            Assert.Null(validation.GetFormErrors("01-01-20 17:35", "01-01-20 17:35", "37.0 oC"));
+            Assert.Null(validation.ProcessForm("01-01-20 17:35", "01-01-20 17:35", "37.0 oC", "GMT Standard Time", "en-GB"));
         }
 
         [Fact]
         public void NoErrorNullSymptoms()
         {
             var validation = new UiValidation();
-            Assert.Null(validation.GetFormErrors("01-01-20 17:35", null, "37.0 oC"));
-        }
-
-        [Fact]
-        public void DateTimeValidYear2020()
-        {
-            var validation = new UiValidation();
-            Assert.Null(validation.GetFormErrors("01-01-2020 17:01", null, "39.9 oC"));
-        }
-
-        [Fact]
-        public void DateTimeValidSeconds()
-        {
-            var validation = new UiValidation();
-            Assert.Null(validation.GetFormErrors("01-01-2020 17:01:59", null, "39.9 oC"));
-        }
-
-        [Fact]
-        public void DateTimeValidMonthAbrInChars()
-        {
-            var validation = new UiValidation();
-            Assert.Null(validation.GetFormErrors("31-Jan-2020 17:01:59", null, "39.9 oC"));
-        }
-
-        [Fact]
-        public void DateTimeValidMonthFullInChars()
-        {
-            var validation = new UiValidation();
-            Assert.Null(validation.GetFormErrors("31-January-2020 17:01:59", null, "39.9 oC"));
-        }
-
-
-        [Fact]
-        public void DateTimeValidForwardSlashSeparator()
-        {
-            var validation = new UiValidation();
-            Assert.Null(validation.GetFormErrors("31/Jan/2020 17:01:59", null, "39.9 oC"));
+            Assert.Null(validation.ProcessForm("01-01-20 17:35", null, "37.0 oC","GMT Standard Time", "en-GB"));
         }
 
         [Fact]
         public void NoErrorEmptySymptoms()
         {
             var validation = new UiValidation();
-            Assert.Null(validation.GetFormErrors("01-01-20 17:35", "", "37.0 oC"));
+            Assert.Null(validation.ProcessForm("01-01-20 17:35", "", "37.0 oC", "GMT Standard Time", "en-GB"));
         }
 
         [Fact]
         public void TemperatureEmpty()
         {
             var validation = new UiValidation();
-            Assert.Contains("User error 001", validation.GetFormErrors("01-01-20 17:35", "01-01-20 17:35", ""));
+            Assert.Contains("User error 001", validation.ProcessForm("01-01-20 17:35", "01-01-20 17:35", "", "GMT Standard Time", "en-GB"));
         }
 
         [Fact]
         public void TemperatureNull()
         {
             var validation = new UiValidation();
-            Assert.Contains("User error 001", validation.GetFormErrors("01-01-20 17:35", "01-01-20 17:35", null));
+            Assert.Contains("User error 001", validation.ProcessForm("01-01-20 17:35", "01-01-20 17:35", null, "GMT Standard Time", "en-GB"));
         }
 
         [Fact]
         public void TemperatureNoSymbol()
         {
             var validation = new UiValidation();
-            Assert.Contains("User error 001", validation.GetFormErrors("01-01-20 17:35", "01-01-20 17:35", "39.0"));
+            Assert.Contains("User error 001", validation.ProcessForm("01-01-20 17:35", "01-01-20 17:35", "39.0", "GMT Standard Time", "en-GB"));
         }
 
         [Fact]
-        public void TemperatureNAN()
+        public void TemperatureNotANumber()
         {
             var validation = new UiValidation();
-            Assert.Contains("User error 002", validation.GetFormErrors("01-01-20 17:35", "01-01-20 17:35", "3x.0 oC"));
+            Assert.Contains("User error 002", validation.ProcessForm("01-01-20 17:35", "01-01-20 17:35", "3x.0 oC", "GMT Standard Time", "en-GB"));
         }
 
         [Fact]
         public void TemperatureOutOfRangeHigh()
         {
             var validation = new UiValidation();
-            Assert.Contains("User error 003", validation.GetFormErrors("01-01-20 17:35", "01-01-20 17:35", "43.1 oC"));
+            Assert.Contains("User error 003", validation.ProcessForm("01-01-20 17:35", "01-01-20 17:35", "43.1 oC", "GMT Standard Time", "en-GB"));
         }
 
         [Fact]
         public void TemperatureOutOfRangeLow()
         {
             var validation = new UiValidation();
-            Assert.Contains("User error 003", validation.GetFormErrors("01-01-20 17:35", "01-01-20 17:35", "23.9 oC"));
+            Assert.Contains("User error 003", validation.ProcessForm("01-01-20 17:35", "01-01-20 17:35", "23.9 oC", "GMT Standard Time", "en-GB"));
         }
 
         [Fact]
         public void StartQuarantineEmpty()
         {
             var validation = new UiValidation();
-            Assert.Contains("User error 004", validation.GetFormErrors("", "01-01-20 17:35", "39.9 oC"));
+            Assert.Contains("User error 004", validation.ProcessForm("", "01-01-20 17:35", "39.9 oC", "GMT Standard Time", "en-GB"));
         }
 
         [Fact]
         public void StartQuarantineNull()
         {
             var validation = new UiValidation();
-            Assert.Contains("User error 004", validation.GetFormErrors(null, "01-01-20 17:35", "39.9 oC"));
-        }
-
-        [Fact]
-        public void DateTimeInvalidTime()
-        {
-            var validation = new UiValidation();
-            Assert.Contains("User error 005", validation.GetFormErrors("01-01-20 17:61", null, "39.9 oC"));
-        }
-
-        [Fact]
-        public void DateTimeInvalidDay()
-        {
-            var validation = new UiValidation();
-            Assert.Contains("User error 005", validation.GetFormErrors("32-01-20 17:01", null, "39.9 oC"));
-        }
-
-
-        [Fact]
-        public void DateTimeInvalidMonth()
-        {
-            var validation = new UiValidation();
-            Assert.Contains("User error 005", validation.GetFormErrors("31-13-20 17:01", null, "39.9 oC"));
-        }
-
-        [Fact]
-        public void DateTimeInvalidYear()
-        {
-            var validation = new UiValidation();
-            Assert.Contains("User error 005", validation.GetFormErrors("01-01-xx 17:01", null, "39.9 oC"));
-        }
-
-
-        [Fact]
-        public void DateTimeInValidBackslashSeparator()
-        {
-            var validation = new UiValidation();
-            Assert.Contains("User error 005", validation.GetFormErrors("31\\Jan\\2020 17:01:59", null, "39.9 oC"));
+            Assert.Contains("User error 004", validation.ProcessForm(null, "01-01-20 17:35", "39.9 oC", "GMT Standard Time", "en-GB"));
         }
 
         [Fact]
         public void SelfIsolationAfterCurrentTime()
         {
             var validation = new UiValidation();
-            Assert.Contains("User error 006", validation.GetFormErrors("01-01-2050 17:01:59", null, "39.9 oC"));
+            Assert.Contains("User error 006", validation.ProcessForm("01-01-2050 17:01:59", null, "39.9 oC", "GMT Standard Time", "en-GB"));
         }
 
         [Fact]
         public void StartSymptomsInvalidDate()
         {
             var validation = new UiValidation();
-            Assert.Contains("User error 007", validation.GetFormErrors("01-01-2020 17:01:59", "01-xx-2020 17:01:59", "39.9 oC"));
+            Assert.Contains("User error 007", validation.ProcessForm("01-01-2020 17:01:59", "01-xx-2020 17:01:59", "39.9 oC", "GMT Standard Time", "en-GB"));
+        }
+
+        [Fact]
+        public void StartSymptomsAfterCurrentTime()
+        {
+            var validation = new UiValidation();
+            Assert.Contains("User error 008", validation.ProcessForm("01-01-2020 17:01:59", "01-01-2050 17:01:59", "39.9 oC", "GMT Standard Time", "en-GB"));
         }
 
         [Fact]
         public void StartSymptomsBeforeSelfIsolation()
         {
             var validation = new UiValidation();
-            Assert.Contains("User error 008", validation.GetFormErrors("01-01-2020 17:01:59", "01-01-2019 17:01:59", "39.9 oC"));
+            Assert.Contains("User error 009", validation.ProcessForm("01-01-2020 17:01:59", "01-01-2019 17:01:59", "39.9 oC", "GMT Standard Time", "en-GB"));
         }
-
-
-
     }
 }
