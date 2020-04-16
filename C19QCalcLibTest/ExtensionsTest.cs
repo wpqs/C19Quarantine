@@ -351,45 +351,102 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void ToStringDaysMinSec1Day1Hour1Min1SecTest()
+        public void ToStringDaysHours3DayTest()
         {
-            var span = new TimeSpan(1,1,1,1);
-            Assert.Equal("1 day 1 hour", span.ToStringDaysMinSec());
+            var span = new TimeSpan(3, 0, 0, 0);
+            Assert.Equal("3 days", span.ToStringDaysHours());
+        }
+
+
+        [Fact]
+        public void ToStringDaysHours2DayAdjUpTest()
+        {
+            var span = new TimeSpan(2, 12, 0, 0);
+            Assert.Equal("3 days", span.ToStringDaysHours());
         }
 
         [Fact]
-        public void ToStringDaysMinSecLessDayTest()
+        public void ToStringDaysHours2DayAdjDownTest()
         {
-            var span = new TimeSpan(0, 1, 2, 3);
-            Assert.Equal("1 hour", span.ToStringDaysMinSec());
-        }
-
-        //[Fact]
-        //public void ToStringDaysMinSecLessHourTest()
-        //{
-        //    var span = new TimeSpan(0, 0, 1, 2);
-        //    Assert.Equal("1 minute 2 seconds", span.ToStringDaysMinSec(false));
-        //}
-
-        //[Fact]
-        //public void ToStringDaysMinSecLessMinuteTest()
-        //{
-        //    var span = new TimeSpan(0, 0, 0, 1);
-        //    Assert.Equal("1 second", span.ToStringDaysMinSec(false));
-        //}
-
-        [Fact]
-        public void ToStringDaysMinSecLessSecondTest()
-        {
-            var span = new TimeSpan(0, 0, 0, 0, 50);
-            Assert.Equal("less than an hour", span.ToStringDaysMinSec());
+            var span = new TimeSpan(2, 11, 29, 59);
+            Assert.Equal("2 days 11 hours", span.ToStringDaysHours());
         }
 
         [Fact]
-        public void ToStringDaysMinSecZeroTest()
+        public void ToStringDaysHours2DayTest()
         {
-            var span = new TimeSpan(0, 0, 0, 0, 0);
-            Assert.Equal("zero", span.ToStringDaysMinSec());
+            var span = new TimeSpan(2, 0, 0, 0);
+            Assert.Equal("2 days", span.ToStringDaysHours());
+        }
+
+        [Fact]
+        public void ToStringDaysHours1DayAdjUpTest()
+        {
+            var span = new TimeSpan(1, 12, 0, 00);
+            Assert.Equal("2 days", span.ToStringDaysHours());
+        }
+
+        [Fact]
+        public void ToStringDaysHours1DayAdjDownTest()
+        {
+            var span = new TimeSpan(1, 11, 29, 59);
+            Assert.Equal("1 day 11 hours", span.ToStringDaysHours());
+        }
+
+        [Fact]
+        public void ToStringDaysHours1DayTest()
+        {
+            var span = new TimeSpan(1, 0, 0, 0);
+            Assert.Equal("1 day", span.ToStringDaysHours());
+        }
+
+        [Fact]
+        public void ToStringDaysHours3HourTest()
+        {
+            var span = new TimeSpan(0, 3, 0, 0);
+            Assert.Equal("3 hours", span.ToStringDaysHours());
+        }
+
+        [Fact]
+        public void ToStringDaysHours2HourAdjUpTest()
+        {
+            var span = new TimeSpan(0, 2, 30, 00);
+            Assert.Equal("3 hours", span.ToStringDaysHours());
+        }
+
+        [Fact]
+        public void ToStringDaysHours2HourAdjDownTest()
+        {
+            var span = new TimeSpan(0, 2, 29, 59);
+            Assert.Equal("2 hours", span.ToStringDaysHours());
+        }
+
+        [Fact]
+        public void ToStringDaysHours1HourTest()
+        {
+            var span = new TimeSpan(0, 1, 0, 0);
+            Assert.Equal("1 hour", span.ToStringDaysHours());
+        }
+
+        [Fact]
+        public void ToStringDaysHoursLessHourTest()
+        {
+            var span = new TimeSpan(0, 0, 59, 59);
+            Assert.Equal("less than an hour", span.ToStringDaysHours());
+        }
+
+        [Fact]
+        public void ToStringDaysHoursLessSecondTest()
+        {
+            var span = new TimeSpan(0, 0, 0, 1);
+            Assert.Equal("less than an hour", span.ToStringDaysHours());
+        }
+
+        [Fact]
+        public void ToStringDaysHoursZeroTest()
+        {
+            var span = new TimeSpan(0, 0, 0, 0);
+            Assert.Equal("0 minutes", span.ToStringDaysHours());
         }
     }
 }

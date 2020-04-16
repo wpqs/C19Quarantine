@@ -42,10 +42,10 @@ namespace C19QuarantineWebApp.Pages
                     var span = calc.GetSpanInQuarantine(DateTime.UtcNow);
                     if (span.IsError())
                         Result = $"Program error 101: An internal error has been detected. Please report this problem and try again";
-                    else if (span.TotalHours > 0)
+                    else if (span.TotalMinutes > 0)
                     {
                         TextColor = "orange";
-                        Result = $"You need to remain in self-isolation for another {span.ToStringDaysMinSec()} unless you have been advised otherwise";
+                        Result = $"The time remaining for your self-isolation is {span.ToStringDaysHours()}";
                     }
                     else
                     {

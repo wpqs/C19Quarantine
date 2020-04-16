@@ -126,32 +126,25 @@ namespace C19QCalcLib
             return rc;
         }
 
-        public static string ToStringDaysMinSec(this TimeSpan source, bool showZero=false)
+        public static string ToStringDaysHours(this TimeSpan source)
         {
-            // ReSharper disable once RedundantAssignment
-            var rc = "[Error]";
+            var rc = "0 minutes";
 
-            if (source.Days > 0)
-                rc = (source.Days == 1) ? $"1 day " : $"{source.Days} days ";
-            else
-                rc  = (showZero) ? "0 days " : "";
-            if (source.Hours > 0)
-                rc += (source.Hours == 1) ? "1 hour " : $"{source.Hours} hours ";
-            else
-                rc += (showZero) ? "0 hours " : "";
-            //if (source.Minutes > 0)
-            //    rc += (source.Minutes == 1) ? "1 minute " : $"{source.Minutes} minutes ";
-            //else
-            //    rc += (showZero == true) ? "0 minutes " : "";
-            //if (source.Seconds > 0)
-            //     rc += (source.Seconds == 1) ? "1 second " : $"{source.Seconds} seconds ";
-            //else
-            //     rc += (showZero == true) ? "0 seconds " : "";
+            if (source.TotalMilliseconds > 1)
+            {
+                var hours = (source.Minutes >= 30) ? source.Hours + 1 : source.Hours;
+                var days = (hours >= 12) ? source.Days+1 : source.Days;
 
-            if (string.IsNullOrEmpty(rc))
-                rc = (source.TotalMilliseconds < 1) ? "zero" : "less than an hour";
-
-            return rc.TrimEnd();
+                if (days < 1)
+                    rc = (source.Hours < 1) ? "less than an hour" : (hours == 1) ? "1 hour" : $"{hours} hours"; //hours cannot be 23+1 as days == 0
+                else
+                {
+                    rc = (days == 1) ? $"1 day" : $"{days} days";
+                    if ((hours > 0) && (hours < 12))
+                        rc += (hours == 1) ? " 1 hour" : (hours > 23) ? "23 hours" : $" {hours} hours";
+                }
+            }
+            return rc;
         }
     }
 }
