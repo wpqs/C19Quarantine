@@ -1,12 +1,25 @@
 ToDo List
 =========
 
-1. Publish and functionally test with Test Data
+1. Formal functional testing with Test Data
 
-2. Enhancements
+2. Hosting
 	Implement SSL (free)
+	Update AzureCmds for setting custom domain name with SSL
 
-3. Obtain validation 
+3. Refactor UiValidation.ProcessForm() - create separate methods for each field
+
+4. Refactor error handling to provide message for field with error and form error message
+
+5. Obtain validation 
 	Remove warning banner
+
+6. Implement support for other countries, cultures and language
+	- USA
+	- France
+	- Germany
+	- Italy
+	- Spain
+	- Portugal
 
 
