@@ -1,7 +1,38 @@
-AzureResCmds.txt - commands needed to create resources for C19Quarantine.org
-============================================================================
+AzureResCmds.txt - commands needed to create resources for C19Isolate.org
+=========================================================================
+
+18-04-20: Renamed for URL www.c19isolate.org and published to C19IsolateWebApp in my S1 service plan to allow use of SSL
 
 az account set --subscription XXXX
-az group create --name resC19Q --location "WestEurope"
-az appservice plan create --name C19QPlan --resource-group resC19Q --location "WestEurope" --sku FREE
-az webapp create --name C19QuarantineWebApp --plan C19QPlan --resource-group resC19Q
+
+Create new Resource Group and Service Plan
+------------------------------------------
+
+az group create --name resC19Isolate --location "WestEurope"
+az appservice plan create --name C19IsolatePlan --resource-group resC19Isolate --location "WestEurope" --sku FREE
+az webapp create --name C19IsolateWebApp --plan C19IsolatePlan --resource-group resC19Isolate
+
+
+Create use existing Resource Group and Service Plan
+---------------------------------------------------
+
+az webapp create --name C19IsolateWebApp --plan XXX --resource-group XXX
+
+Note: You can move an app to another App Service plan, as long as the source plan and the target plan are in the same resource group and geographical region.
+
+
+setup custom domain
+-------------------
+Prep: Use DNS service to create a CNAME record: www.c19isolate.org with alias C19isolatewebapp.azurewebsites.net 
+
+az webapp config hostname add --webapp-name C19IsolateWebApp --resource-group XXX --hostname www.c19isolate.org
+
+add SSL
+-------
+
+[not yet done - pref use of Azure Free SSL]
+
+
+
+
+
