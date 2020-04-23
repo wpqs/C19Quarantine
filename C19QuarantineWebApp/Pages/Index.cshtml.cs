@@ -37,9 +37,16 @@ namespace C19QuarantineWebApp.Pages
                 var validation = new UiValidation();
                 if ((Result = validation.ProcessForm(startQuarantine, startSymptoms, temperature, "GMT Standard Time", "en-GB")) == null)
                 {
+                    var nowUtc = DateTime.UtcNow;
                     var person = new Person("Fred", validation.SelfIsolationTime, validation.TemperatureValue, validation.SymptomsTime);
                     var calc = new CalcUk(person);
-                    var span = calc.GetSpanInQuarantine(DateTime.UtcNow);
+
+                    if (calc.IsSymptomatic(validation.TemperatureValue) && (validation.SymptomsTime == null))
+                        StartSymptoms = nowUtc.ConvertUtcToLocalTime("GMT Standard Time").ToString(UiValidation.DateTimeFormat);
+                    else
+                        StartSymptoms = startSymptoms;
+
+                    var span = calc.GetSpanInQuarantine(nowUtc);
                     if (span.IsError())
                         Result = $"Program error 101: An internal error has been detected. Please report this problem and try again";
                     else if (span.TotalMinutes > 0)

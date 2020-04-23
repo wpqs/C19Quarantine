@@ -1,5 +1,4 @@
 Bugs
 ----
 
- Date 23-04-20, Start 03-04-20, symptoms (blank), temp 39  - gives 7 days not 1 day
 
