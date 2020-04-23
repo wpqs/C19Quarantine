@@ -19,9 +19,9 @@ namespace C19QuarantineWebApp.Pages
             Result = $"To calculate the number of days that you must remain in self-isolation provide the above data and then click the calculate button.";
             try
             {
-                var nowUtc = DateTime.UtcNow;
+                var nowUtc =  DateTime.UtcNow;
                 StartQuarantine = nowUtc.ConvertUtcToLocalTime(UiValidation.DateTimeFormat, "GMT Standard Time");
-                Temperature = $"0.0 {UiValidation.DegreesCelsiusSymbol}";
+                Temperature = $"0.0";
             }
             catch (Exception e)
             {

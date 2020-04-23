@@ -6,7 +6,7 @@ namespace C19QCalcLib
     public class UiValidation
     {
         public const string SampleDateTime = "14-04-20 10:45 AM";
-        public const string DateTimeFormat = "dd-MM-yy hh:mm tt";
+        public const string DateTimeFormat = "dd-MM-yy h:mm tt";
         public const string DegreesCelsiusSymbol = "oC";
         public const double DegreesCelsiusMin = 24.0;
         public const double DegreesCelsiusMax = 43.0;
@@ -28,12 +28,11 @@ namespace C19QCalcLib
                     var nowUtc = DateTime.UtcNow;
                     var nowLocal = nowUtc.ConvertUtcToLocalTime(timeZoneIdName);
 
-                    if (string.IsNullOrEmpty(temperature) || (temperature.Contains(DegreesCelsiusSymbol) == false))
-                        rc = $"User error 001: Temperature value is invalid. It is empty or doesn't end with {DegreesCelsiusSymbol}. Please try again with a correct value like 37.0 {DegreesCelsiusSymbol}";
+                    if (string.IsNullOrEmpty(temperature))
+                        rc = $"User error 001: Temperature value is invalid. It is empty. Please try again with a correct value like 37.0";
                     else
                     {
-                        var index = temperature.IndexOf(DegreesCelsiusSymbol, StringComparison.InvariantCulture);
-                        if (double.TryParse(temperature.Substring(0, (index > 0) ? index : 0), out var temp) == false)
+                        if (double.TryParse(temperature.Trim(), out var temp) == false)
                             rc = $"User error 002: Temperature value {temperature} is invalid. It is not a valid number. Please try again with a correct value like 37.0 {DegreesCelsiusSymbol}";
                         else
                         {
@@ -73,7 +72,7 @@ namespace C19QCalcLib
                                                     {
                                                         span = symptoms - SelfIsolationTime;
                                                         if (span.TotalSeconds < 0)
-                                                            rc = $"User error 009: Start symptoms value {startSymptomsLocal} is invalid. It is before the start of your self-isolation. Please try again with value after {SelfIsolationTime.ToString(DateTimeFormat)}";
+                                                            rc = $"User error 009: Start symptoms value {startSymptomsLocal} is invalid. It is before the start of your self-isolation. If your symptoms started before you entered self-isolation then enter {startQuarantineLocal} as the start of your symptoms and try again";
                                                         else
                                                         {
                                                             SymptomsTime = symptoms;

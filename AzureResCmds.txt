@@ -30,9 +30,24 @@ az webapp config hostname add --webapp-name C19IsolateWebApp --resource-group XX
 add SSL
 -------
 
-[not yet done - pref use of Azure Free SSL]
+a. Create App Service Managed Certificates
+
+az webapp config ssl create --resource-group XXX --name C19IsolateWebApp --hostname www.c19isolate.org
 
 
+b. List SSL Certificates
+
+az webapp config ssl list --resource-group XXX
+
+copy thumbprint value for www.c19isolate.org - TTTTT
+
+c. Add TLS/SSL Binding
+
+az webapp config ssl bind --certificate-thumbprint TTTTT --name C19IsolateWebApp --resource-group XXX --ssl-type SNI
+
+d. Set HTTPS Only
+
+az webapp update --resource-group XXX --name C19IsolateWebApp --set HttpsOnly=true
 
 
 
