@@ -10,9 +10,9 @@ namespace C19QCalcLib
 
         private readonly TimeSpan _quarantineSpanNoSymptoms = new TimeSpan(14,0,0,0);
         private readonly TimeSpan _quarantineSpanWithSymptoms = new TimeSpan(7, 0, 0, 0);
-        private readonly Person _person;
+        private readonly Record _person;
 
-        public CalcUk(Person person)
+        public CalcUk(Record person)
         {
             _person = person;
         }
@@ -42,7 +42,7 @@ namespace C19QCalcLib
             return rc;
         }
 
-        public TimeSpan GetSpanInQuarantine(DateTime nowUtc)
+        public TimeSpan GetSpanInIsolation(DateTime nowUtc)
         {
             var rc = Extensions.TimeSpanError; //error
 

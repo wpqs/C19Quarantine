@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using C19QCalcLib;
+using Microsoft.AspNetCore.Mvc;
 
 namespace C19QuarantineWebApp.Pages
 {
@@ -8,9 +11,15 @@ namespace C19QuarantineWebApp.Pages
     {
         public string Result { get; private set; }
         public string TextColor { get; private set; }
+        public string ProgramError { get; private set; }
 
-        public string StartQuarantine { get; set; }
+        [BindProperty, Required, Display(Name = "start self-isolation")]
+        public string StartIsolation { get; set; }
+
+        [BindProperty, Display(Name = "start of symptoms")]
         public string StartSymptoms { get; set; }
+
+        [BindProperty, Required, Display(Name = "body temperature"), StringLength(4, MinimumLength = 2)]
         public string Temperature { get; set; }
 
         public void OnGet()
@@ -19,36 +28,37 @@ namespace C19QuarantineWebApp.Pages
             Result = $"To calculate the number of days that you must remain in self-isolation provide the above data and then click the calculate button.";
             try
             {
-                var nowUtc =  DateTime.UtcNow;
-                StartQuarantine = nowUtc.ConvertUtcToLocalTime(UiValidation.DateTimeFormat, "GMT Standard Time");
-                Temperature = $"0.0";
+                StartIsolation = DateTime.UtcNow.ConvertUtcToLocalTime(IndexForm.DateTimeFormat, "GMT Standard Time");
             }
             catch (Exception e)
             {
-                Result = $"Program error 100: An internal error has been detected. {e.Message}. Please report this problem and try again";
+                ModelState.TryAddModelError(nameof(ProgramError), $"{MxFormProc.ProgramErrorMsg} 100: {e.Message}. Please report this problem");
             }
         }
 
-        public void OnPost(string startQuarantine, string startSymptoms, string temperature)
+        public IActionResult OnPost() 
         {
-            TextColor = "red";
-            try
+            IActionResult rc = Page();
+
+            var form = ProcessForm("GMT Standard Time", "en-GB");   //get time and culture from dropdowns on form
+
+            if (ModelState.IsValid && (form != null))
             {
-                var validation = new UiValidation();
-                if ((Result = validation.ProcessForm(startQuarantine, startSymptoms, temperature, "GMT Standard Time", "en-GB")) == null)
+                TextColor = "red";
+                try
                 {
                     var nowUtc = DateTime.UtcNow;
-                    var person = new Person("Fred", validation.SelfIsolationTime, validation.TemperatureValue, validation.SymptomsTime);
-                    var calc = new CalcUk(person);
+                    var record = new Record("Fred", form.StartIsolation, form.Temperature, form.StartSymptoms);
+                    var calc = new CalcUk(record);
 
-                    if (calc.IsSymptomatic(validation.TemperatureValue) && (validation.SymptomsTime == null))
-                        StartSymptoms = nowUtc.ConvertUtcToLocalTime("GMT Standard Time").ToString(UiValidation.DateTimeFormat);
+                    if (calc.IsSymptomatic(form.Temperature) && (form.StartSymptoms == null))
+                        StartSymptoms = nowUtc.ConvertUtcToLocalTime("GMT Standard Time").ToString(IndexForm.DateTimeFormat);
                     else
-                        StartSymptoms = startSymptoms;
+                        StartSymptoms = StartSymptoms;
 
-                    var span = calc.GetSpanInQuarantine(nowUtc);
+                    var span = calc.GetSpanInIsolation(nowUtc);
                     if (span.IsError())
-                        Result = $"Program error 101: An internal error has been detected. Please report this problem and try again";
+                        ModelState.TryAddModelError(nameof(ProgramError), $"{MxFormProc.ProgramErrorMsg} 101: An internal error has been detected. Please report this problem");
                     else if (span.TotalMinutes > 0)
                     {
                         TextColor = "orange";
@@ -60,11 +70,43 @@ namespace C19QuarantineWebApp.Pages
                         Result = $"Your self-isolation is now COMPLETE unless you have been advised otherwise";
                     }
                 }
+                catch (Exception e)
+                {
+                    ModelState.TryAddModelError(nameof(ProgramError), $"{MxFormProc.ProgramErrorMsg} 102: {e.Message}. Please report this problem.");
+                }
             }
-            catch (Exception e)
+            return rc;
+        }
+
+        public IndexForm ProcessForm(string timeZoneId, string culture)
+        {
+            IndexForm rc = null;
+
+            if (ModelState.IsValid)
             {
-                Result = $"Program error 102: An internal error has been detected. {e.Message}. Please report this problem and try again";
+                var form = new IndexForm(timeZoneId, culture);
+
+                var paramList = new List<KeyValuePair<string, object>>()
+                {
+                    new KeyValuePair<string, object>(nameof(ProgramError), ProgramError),
+                    new KeyValuePair<string, object>(nameof(Temperature), Temperature),
+                    new KeyValuePair<string, object>(nameof(StartIsolation), StartIsolation),
+                    new KeyValuePair<string, object>(nameof(StartSymptoms), StartSymptoms),
+                };
+
+                var errors = form.Validate(paramList.ToArray());
+                if (errors == null)
+                    ModelState.TryAddModelError(nameof(ProgramError), $"{MxFormProc.ProgramErrorMsg} 100: Invalid Property Names");
+                else
+                {
+                    foreach (var error in errors)
+                        ModelState.TryAddModelError(error.Key, error.Value);
+
+                    if (form.IsValid())
+                        rc = form;
+                }
             }
+            return rc;
         }
     }
 }

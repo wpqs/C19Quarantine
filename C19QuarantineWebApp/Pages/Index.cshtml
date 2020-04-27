@@ -15,23 +15,24 @@
             <div class="col-md-4">
                 <form method="post">
                     <div class="form-group">
-                        @* ReSharper disable once Html.IdNotResolved *@
-                        <label for="StartQuarantine" class="col-form-label">When did you start self-isolation? (see note 1)</label>
-                        <input class="form-control" asp-for="StartQuarantine"/>
+                        <label asp-for="StartIsolation" class="col-form-label">When did you start self-isolation? (see note 1)</label>
+                        <input class="form-control" asp-for="StartIsolation"/>
+                        <span asp-validation-for="StartIsolation" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        @* ReSharper disable once Html.IdNotResolved *@
-                        <label for="StartSymptoms" class="col-form-label">When did symptoms first start? (see note 2)</label>
-                        <input class="form-control" asp-for="StartSymptoms" value="@Model.StartSymptoms" />
+                        <label asp-for="StartSymptoms" class="col-form-label">When did symptoms first start? (see note 2)</label>
+                        <input class="form-control" asp-for="StartSymptoms" value="@Model.StartSymptoms"/>
+                        <span asp-validation-for="StartSymptoms" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        @* ReSharper disable once Html.IdNotResolved *@
-                        <label for="Temperature" class="col-form-label">What is your temperature now in oC (see note 3)</label>
+                        <label asp-for="Temperature" class="col-form-label">What is your temperature now in oC (see note 3)</label>
                         <input class="form-control" asp-for="Temperature"/>
+                        <span asp-validation-for="Temperature" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <input type="submit" value="Calculate" class="btn btn-primary"/>
                     </div>
+                    <span asp-validation-for="ProgramError" class="text-danger"></span>
                 </form>
             </div>
         </div>
@@ -50,7 +51,7 @@
             <li>Leave time when symptoms started empty if you have not had any symptoms since the start of self-isolation, otherwise give it in UK 12 hour format like 17-01-20 5:30 PM.</li>
             <li>The value we use for determining high temperature is <b>greater than or equal to 38.0 degrees celsius (oC)</b> as recorded by an oral thermometer. This value is given in the <a href="https://www.nhs.uk/common-health-questions/accidents-first-aid-and-treatments/how-do-i-take-someones-temperature/" target="_blank">NHS First Aid Advice</a>&nbsp;and
                 <a href="https://www.cdc.gov/coronavirus/2019-ncov/downloads/COVID-19_CAREKit_ENG.pdf" target="_blank">US CDC guidance</a>. However, you should appreciate that it's not always easy to take a temperature accurately. Therefore if you feel hot or shivery you may have a high temperature even if a thermometer says your temperature is below 38 degrees celsius. In this case
-                enter '39.0 oC' as your temperature.
+                enter '39.0' as your temperature.
             </li>
         </ol>
         <hr/>
