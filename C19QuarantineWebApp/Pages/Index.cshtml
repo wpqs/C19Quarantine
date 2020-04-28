@@ -6,12 +6,11 @@
 
 <div class="text-center">
     <div align="left">
-        <p style="background-color: red; color: white" align="center">WARNING: This website has not been validated and is not currently suitable for calculating your self-isolation period for Covid-19.</p>
+      @*  <p style="background-color: red; color: white" align="center">WARNING: This website has not been validated and is not currently suitable for calculating your self-isolation period for Covid-19.</p> *@
 
-    @*<p style="background-color: red; color: white" align="center">This website does NOT give any medical advice beyond the isolation periods for Covid-19 in the UK
-            as recommended by <a href="https://www.nhs.uk/conditions/coronavirus-covid-19/self-isolation-advice/" target="_blank">NHS Guidelines</a></p> *@
-
-        <div class="row">
+    <p style="background-color: red; color: white" align="center">This website does NOT give any medical advice. It just calculates the isolation periods for Covid-19 in the UK
+            as recommended by <a href="https://www.nhs.uk/conditions/coronavirus-covid-19/self-isolation-advice/" target="_blank">NHS Guidelines</a></p>
+      <div class="row">
             <div class="col-md-4">
                 <form method="post">
                     <div class="form-group">
@@ -20,7 +19,7 @@
                         <span asp-validation-for="StartIsolation" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label asp-for="StartSymptoms" class="col-form-label">When did symptoms first start? (see note 2)</label>
+                        <label asp-for="StartSymptoms" class="col-form-label">When did your symptoms first start? (see note 2)</label>
                         <input class="form-control" asp-for="StartSymptoms" value="@Model.StartSymptoms"/>
                         <span asp-validation-for="StartSymptoms" class="text-danger"></span>
                     </div>
@@ -47,8 +46,8 @@
 
         <h5>Notes</h5>
         <ol>
-            <li> The time you started self-isolation must be given in UK 12 hour format like 17-01-20 5:30 PM. It may be the same as when your symptoms first started, or it may be when the first person in your household developed symptoms, or when you were told to self-isolate because of contact with someone with Covid-19.</li>
-            <li>Leave time when symptoms started empty if you have not had any symptoms since the start of self-isolation, otherwise give it in UK 12 hour format like 17-01-20 5:30 PM.</li>
+            <li>Enter into <b>started self-isolation</b> the date and time in UK 12 hour format like 17-01-20 5:30 PM. This may be when your symptoms first started, or it may be when the first person in your household developed symptoms, or when you were told to self-isolate because of contact with someone with Covid-19.</li>
+            <li>Enter into <b>symptoms first started</b> the date and time in UK 12 hour format like 17-01-20 5:30 PM. Leave it empty if you have not had any symptoms since starting self-isolation.</li>
             <li>The value we use for determining high temperature is <b>greater than or equal to 38.0 degrees celsius (oC)</b> as recorded by an oral thermometer. This value is given in the <a href="https://www.nhs.uk/common-health-questions/accidents-first-aid-and-treatments/how-do-i-take-someones-temperature/" target="_blank">NHS First Aid Advice</a>&nbsp;and
                 <a href="https://www.cdc.gov/coronavirus/2019-ncov/downloads/COVID-19_CAREKit_ENG.pdf" target="_blank">US CDC guidance</a>. However, you should appreciate that it's not always easy to take a temperature accurately. Therefore if you feel hot or shivery you may have a high temperature even if a thermometer says your temperature is below 38 degrees celsius. In this case
                 enter '39.0' as your temperature.
