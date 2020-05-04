@@ -6,7 +6,6 @@ namespace C19QuarantineWebApp.Pages
     {
         public void OnGet()
         {
-
         }
     }
 }

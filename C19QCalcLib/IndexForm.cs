@@ -131,7 +131,7 @@ namespace C19QCalcLib
                         rc = $"This value is required";
                     else
                     {
-                        var isolation = startQuarantineLocal.ConvertLocalTimeToUtc(TimeZoneId, CultureName);
+                        var isolation = startQuarantineLocal.ConvertLocalTimeToUtcDateTime(TimeZoneId, CultureName);
                         if (isolation.IsError())
                             rc = $"Please try again with a valid date/time like {SampleDateTime}";
                         else
@@ -170,7 +170,7 @@ namespace C19QCalcLib
                         StartSymptoms = null;  //Ok, as value is optional
                     else
                     {
-                        var symptoms = startSymptomsLocal.ConvertLocalTimeToUtc(TimeZoneId, CultureName);
+                        var symptoms = startSymptomsLocal.ConvertLocalTimeToUtcDateTime(TimeZoneId, CultureName);
                         if (symptoms.IsError())
                             rc = $"Please try again with a valid date/time like {SampleDateTime}";
                         else

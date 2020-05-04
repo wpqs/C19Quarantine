@@ -3,5 +3,6 @@
     interface ICalc
     {
         bool IsSymptomatic(double temperature);
+        int GetIsolationPeriodMax();
     }
 }

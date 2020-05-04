@@ -9,6 +9,7 @@ namespace C19QCalcLib
         public DateTime? FirstSymptomsUtc { get; private set; }
         public double Temperature { get; private set; }
 
+        public void SetFirstSymptoms(DateTime firstSymptomsUtc) { FirstSymptomsUtc = firstSymptomsUtc; }
         public Record(string name, DateTime quarantineStartedUtc, double temp, DateTime? firstSymptomsUtc=null)
         {
             Name = name;

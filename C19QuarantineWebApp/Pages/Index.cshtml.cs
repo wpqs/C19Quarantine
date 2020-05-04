@@ -9,6 +9,9 @@ namespace C19QuarantineWebApp.Pages
 {
     public class IndexModel : PageModel
     {
+        public bool ShowRange { get; private set; }
+        public int IsolationDaysMax { get; private set; }
+        public int IsolationDaysRemaining { get; private set; }
         public string Result { get; private set; }
         public string TextColor { get; private set; }
         public string ProgramError { get; private set; }
@@ -28,7 +31,8 @@ namespace C19QuarantineWebApp.Pages
             Result = $"To calculate the number of days that you must remain in self-isolation provide the above data and then click the calculate button.";
             try
             {
-                StartIsolation = DateTime.UtcNow.ConvertUtcToLocalTime(IndexForm.DateTimeFormat, "GMT Standard Time");
+                StartIsolation = DateTime.UtcNow.ConvertUtcToLocalTimeString(IndexForm.DateTimeFormat, "GMT Standard Time");
+                ShowRange = false;
             }
             catch (Exception e)
             {
@@ -51,23 +55,28 @@ namespace C19QuarantineWebApp.Pages
                     var record = new Record("Fred", form.StartIsolation, form.Temperature, form.StartSymptoms);
                     var calc = new CalcUk(record);
 
+                    IsolationDaysMax = calc.GetIsolationPeriodMax();
+
                     if (calc.IsSymptomatic(form.Temperature) && (form.StartSymptoms == null))
                         StartSymptoms = nowUtc.ConvertUtcToLocalTime("GMT Standard Time").ToString(IndexForm.DateTimeFormat);
                     else
                         StartSymptoms = StartSymptoms;
 
-                    var span = calc.GetSpanInIsolation(nowUtc);
+                    ShowRange = true;
+                    var span = calc.GetTimeSpanInIsolation(nowUtc);
                     if (span.IsError())
                         ModelState.TryAddModelError(nameof(ProgramError), $"{MxFormProc.ProgramErrorMsg} 101: An internal error has been detected. Please report this problem");
                     else if (span.TotalMinutes > 0)
                     {
                         TextColor = "orange";
-                        Result = $"The time remaining for your self-isolation is {span.ToStringDaysHours()}";
+                        Result = $"The time remaining for your self-isolation is {span.ToStringRemainingDaysHours()}";
+                        IsolationDaysRemaining = ((int) span.TotalDays) + 1;
                     }
                     else
                     {
                         TextColor = "green";
                         Result = $"Your self-isolation is now COMPLETE unless you have been advised otherwise";
+                        IsolationDaysRemaining = 0;
                     }
                 }
                 catch (Exception e)

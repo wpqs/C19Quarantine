@@ -35,8 +35,11 @@
                 </form>
             </div>
         </div>
+     @if (Model.ShowRange)
+     {
+         <p><input disabled type="range" max=@Model.IsolationDaysMax min=0 value=@Model.IsolationDaysRemaining></p>
+     }
         <p><b><span style="color: @Model.TextColor">@Model.Result</span></b></p>
-
         <hr/>
 
         <p>This website aims to calculate your self-isolation period for Covid-19 as recommended by the UK National Health Service (NHS) for people who are not in a group considered at risk.
@@ -50,7 +53,7 @@
             <li>Enter into <b>symptoms first started</b> the date and time in UK 12 hour format like 17-01-20 5:30 PM. Leave it empty if you have not had any symptoms since starting self-isolation.</li>
             <li>The value we use for determining high temperature is <b>greater than or equal to 38.0 degrees celsius (oC)</b> as recorded by an oral thermometer. This value is given in the <a href="https://www.nhs.uk/common-health-questions/accidents-first-aid-and-treatments/how-do-i-take-someones-temperature/" target="_blank">NHS First Aid Advice</a>&nbsp;and
                 <a href="https://www.cdc.gov/coronavirus/2019-ncov/downloads/COVID-19_CAREKit_ENG.pdf" target="_blank">US CDC guidance</a>. However, you should appreciate that it's not always easy to take a temperature accurately. Therefore if you feel hot or shivery you may have a high temperature even if a thermometer says your temperature is below 38 degrees celsius. In this case
-                enter '39.0' as your temperature.
+                enter '39' as your temperature.
             </li>
         </ol>
         <hr/>
@@ -64,6 +67,9 @@
     </div>
 </div>
 
-@section Scripts {
+@section Scripts 
+{
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
 }
+

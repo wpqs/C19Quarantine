@@ -10,6 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{322995F5-7
 		AzureResCmds.txt = AzureResCmds.txt
 		Bugs.txt = Bugs.txt
 		References.txt = References.txt
+		SmokeTest.txt = SmokeTest.txt
 		Docs\TestData-Family-0.jpg = Docs\TestData-Family-0.jpg
 		Docs\TestData-SinglePerson-0.jpg = Docs\TestData-SinglePerson-0.jpg
 		ToDo.txt = ToDo.txt
