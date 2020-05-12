@@ -1,11 +1,28 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace C19QCalcLib
 {
-    public static class TimeZones
+    public class TimeZones
     {
+        public string Selected { get; set; }
+        public List<SelectListItem> Items { get; set; }
+        public string GetDefault() { return (Items.Count > 0) ? Items[0].Value : "[error]"; }
+
+        public TimeZones()
+        {
+            Items = new List<SelectListItem>
+            {
+                new SelectListItem("Greenwich Mean Time", "GMT", (Selected == "GMT")),
+                new SelectListItem("Central European Time", "CET", (Selected == "CET")),
+                new SelectListItem("Indian Standard Time", "IST", (Selected == "IST"))
+            };
+            Selected = GetDefault();
+        }
+
         public static string GetReport(string startOfLine, string endOfLine, string tab, string endOfRecord, string timeZoneId=null)
         {
             var rc = "[Error]";

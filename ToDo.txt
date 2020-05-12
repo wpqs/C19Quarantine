@@ -1,7 +1,7 @@
 ToDo List
 =========
 
-1. Implement Noda time and drop-down in menu for setting time zone
+1. Implement Noda time 
 
 2. Implement support for other countries, cultures and language
 	- USA

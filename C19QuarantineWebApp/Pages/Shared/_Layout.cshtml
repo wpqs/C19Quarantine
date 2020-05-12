@@ -7,10 +7,7 @@
     <meta name="description=" content="Calculate your self-isolation period for UK using NHS guidance"/>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
-   
-    <script type="text/javascript">
-        function LayoutTimeZoneSubmit() { document.getElementById("LayoutTimeZoneSubmitButton").click(); }
-    </script>
+    <link rel="stylesheet" href="~/lib/font-awesome/font-awesome-4.7.0/css/font-awesome.min.css">
 
 </head>
 <body>
@@ -31,12 +28,12 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/About">About</a>
                         </li>
+                    </ul>
+                </div>
+                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                    <ul class="navbar-nav ml-auto">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Settings">Settings</a>
-                        </li>
-                        <li class="nav-item dropdown ml-auto">
-                            <vc:time-zone-control time-zone-id="xxx">
-                            </vc:time-zone-control>
+                            <a class="nav-link text-dark" asp-area="" asp-page="/Settings"><i class="fa fa-cog fa-2x"></i></a>
                         </li>
                     </ul>
                 </div>

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>1.1.30.2</Version>
+    <Version>1.1.30.3</Version>
     <Authors>Will Stott</Authors>
     <Company>Maximodex</Company>
     <Product>C19Quarantine</Product>
@@ -10,5 +10,9 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Copyright>Copyright 2020 Will Stott</Copyright>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" Version="2.2.0" />
+  </ItemGroup>
 
 </Project>
