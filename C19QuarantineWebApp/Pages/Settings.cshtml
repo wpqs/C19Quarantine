@@ -1,0 +1,18 @@
+﻿@page
+@model C19QuarantineWebApp.Pages.SettingsModel
+@{
+    ViewData["Title"] = "Settings";
+}
+
+<h1>Settings</h1>
+
+<form method="post">
+    <div class="form-group">
+        <label asp-for="Selected" class="col-form-label">Set Time Zone</label>
+        <select asp-for="Selected" asp-items="Model.Zones.Items"></select>
+    </div>
+    <div class="form-group">
+        <input id="SubmitButton" type="submit" value="Set" class="btn btn-primary"/>
+    </div>    
+</form>
+
