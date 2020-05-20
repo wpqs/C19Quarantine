@@ -2,7 +2,7 @@
 {
     interface ICalc
     {
-        bool IsSymptomatic(double temperature);
+        bool IsSymptomatic();
         int GetIsolationPeriodMax();
     }
 }

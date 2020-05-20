@@ -22,13 +22,13 @@ namespace C19QuarantineWebApp.Pages
         [BindProperty, Display(Name = "start of symptoms")]
         public string StartSymptoms { get; set; }
 
-        [BindProperty, Required, Display(Name = "body temperature"), StringLength(4, MinimumLength = 2)]
-        public string Temperature { get; set; }
+        [BindProperty, Required, Display(Name = "above"), StringLength(3, MinimumLength = 2)]
+        public string HasSymptoms { get; set; }
 
         public void OnGet()
         {
             TextColor = "black";
-            Result = $"To calculate the number of days that you must remain in self-isolation provide the above data and then click the calculate button.";
+            Result = $"To calculate the number of days that you must remain in self-isolation provide the above information and then click the calculate button.";
             try
             {
                 StartIsolation = DateTime.UtcNow.ConvertUtcToLocalTimeString(IndexForm.DateTimeFormat, "GMT Standard Time");
@@ -52,12 +52,12 @@ namespace C19QuarantineWebApp.Pages
                 try
                 {
                     var nowUtc = DateTime.UtcNow;
-                    var record = new Record("Fred", form.StartIsolation, form.Temperature, form.StartSymptoms);
+                    var record = new Record("Fred", form.StartIsolation, form.HasSymptoms, form.StartSymptoms);
                     var calc = new CalcUk(record);
 
                     IsolationDaysMax = calc.GetIsolationPeriodMax();
 
-                    if (calc.IsSymptomatic(form.Temperature) && (form.StartSymptoms == null))
+                    if (calc.IsSymptomatic() && (form.StartSymptoms == null))
                         StartSymptoms = nowUtc.ConvertUtcToLocalTime("GMT Standard Time").ToString(IndexForm.DateTimeFormat);
                     else
                         StartSymptoms = StartSymptoms;
@@ -98,7 +98,7 @@ namespace C19QuarantineWebApp.Pages
                 var paramList = new List<KeyValuePair<string, object>>()
                 {
                     new KeyValuePair<string, object>(nameof(ProgramError), ProgramError),
-                    new KeyValuePair<string, object>(nameof(Temperature), Temperature),
+                    new KeyValuePair<string, object>(nameof(HasSymptoms), HasSymptoms),
                     new KeyValuePair<string, object>(nameof(StartIsolation), StartIsolation),
                     new KeyValuePair<string, object>(nameof(StartSymptoms), StartSymptoms),
                 };

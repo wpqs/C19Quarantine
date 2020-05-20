@@ -8,9 +8,18 @@
     <div align="left">
       @*  <p style="background-color: red; color: white" align="center">WARNING: This website has not been validated and is not currently suitable for calculating your self-isolation period for Covid-19.</p> *@
 
-    <p style="background-color: red; color: white" align="center">This website does NOT give any medical advice. It just calculates the isolation periods for Covid-19 in the UK
-            as recommended by <a href="https://www.nhs.uk/conditions/coronavirus-covid-19/self-isolation-advice/" target="_blank">NHS Guidelines</a></p>
-      <div class="row">
+        <p style="background-color: red; color: white" align="center">This website does NOT give any medical advice. It just calculates the isolation periods for Covid-19 in the UK
+          as recommended by <a href="https://www.nhs.uk/conditions/coronavirus-covid-19/self-isolation-advice/" target="_blank">NHS Guidelines</a></p>
+        <p>The NHS recommends that you should enter self-isolation if you or any members of your household have one or more of the following symptoms:</p>
+        <ul>
+              <li><b>high temperature</b></li>
+              <li><b>new, continuous cough</b></li>
+              <li><b>loss or change to your sense of smell or taste</b>.</li>
+        </ul>
+      
+        <p>You might also need to enter self-isolation if you have had recent contact with someone who has been diagnosed as having Covid-19.</p>
+        <hr/>
+        <div class="row">
             <div class="col-md-4">
                 <form method="post">
                     <div class="form-group">
@@ -24,9 +33,9 @@
                         <span asp-validation-for="StartSymptoms" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label asp-for="Temperature" class="col-form-label">What is your temperature now in oC (see note 3)</label>
-                        <input class="form-control" asp-for="Temperature"/>
-                        <span asp-validation-for="Temperature" class="text-danger"></span>
+                        <label asp-for="HasSymptoms" class="col-form-label">Do you still have symptoms? (see note 3)</label>
+                        <input class="form-control" asp-for="HasSymptoms" value="@Model.HasSymptoms"/>
+                        <span asp-validation-for="HasSymptoms" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <input type="submit" value="Calculate" class="btn btn-primary"/>
@@ -35,34 +44,29 @@
                 </form>
             </div>
         </div>
-     @if (Model.ShowRange)
-     {
-         <p><input disabled type="range" max=@Model.IsolationDaysMax min=0 value=@Model.IsolationDaysRemaining></p>
-     }
+        @if (Model.ShowRange)
+        {
+             <p><input disabled type="range" max=@Model.IsolationDaysMax min=0 value=@Model.IsolationDaysRemaining></p>
+        }
         <p><b><span style="color: @Model.TextColor">@Model.Result</span></b></p>
+
+        <h5>Notes:</h5>
+            <ol>
+                <li>Enter into <b>start self-isolation</b> the date and time in UK 12 hour format like 17-01-20 5:30 PM. This may be when your symptoms first started, 
+                  or it may be when the first person in your household developed symptoms, or when you were told to self-isolate because of contact with someone with Covid-19.</li>
+                <li>Enter into <b>symptoms first start</b> the date and time in UK 12 hour format like 17-01-20 5:30 PM. Leave it empty if you have not had any symptoms since 
+                  starting self-isolation.</li>
+                <li>Enter into <b>still have symptoms</b> the word 'yes' or 'no' depending upon whether you still have any of the following symptoms: a) <i>runny nose</i>, b) <i>feeling sick</i>, c) <i>diarrhoea</i>, d) 
+                  <i>high temperature</i>. You should be aware that other symptoms like a <i>cough</i> or <i>changes to your sense of taste or smell</i> may still persist after the NHS considers it is safe to <i>end self-isolation</i>.
+                  Therefore enter 'yes' only if you still have any of the symptoms a,b,c,d as specified above.</li>
+            </ol>
         <hr/>
 
-        <p>This website aims to calculate your self-isolation period for Covid-19 as recommended by the UK National Health Service (NHS) for people who are not in a group considered at risk.
-            The <a href="https://www.cdc.gov/coronavirus/2019-ncov/downloads/COVID-19_CAREKit_ENG.pdf" target="_blank"> US CDC booklet for Covid-19 Care</a>&nbsp;provides a form for recording your symptoms and
-            temperature over a 14 day period. We recommend that you use this form or something similar to keep an accurate record of your health whilst in self-isolation.</p>
-        <hr/>
-
-        <h5>Notes</h5>
-        <ol>
-            <li>Enter into <b>started self-isolation</b> the date and time in UK 12 hour format like 17-01-20 5:30 PM. This may be when your symptoms first started, or it may be when the first person in your household developed symptoms, or when you were told to self-isolate because of contact with someone with Covid-19.</li>
-            <li>Enter into <b>symptoms first started</b> the date and time in UK 12 hour format like 17-01-20 5:30 PM. Leave it empty if you have not had any symptoms since starting self-isolation.</li>
-            <li>The value we use for determining high temperature is <b>greater than or equal to 38.0 degrees celsius (oC)</b> as recorded by an oral thermometer. This value is given in the <a href="https://www.nhs.uk/common-health-questions/accidents-first-aid-and-treatments/how-do-i-take-someones-temperature/" target="_blank">NHS First Aid Advice</a>&nbsp;and
-                <a href="https://www.cdc.gov/coronavirus/2019-ncov/downloads/COVID-19_CAREKit_ENG.pdf" target="_blank">US CDC guidance</a>. However, you should appreciate that it's not always easy to take a temperature accurately. Therefore if you feel hot or shivery you may have a high temperature even if a thermometer says your temperature is below 38 degrees celsius. In this case
-                enter '39' as your temperature.
-            </li>
-        </ol>
-        <hr/>
-        <h3>Useful links</h3>
+        <h5>Useful links</h5>
         <ul>
             <li><a href="https://www.nhs.uk/conditions/coronavirus-covid-19/self-isolation-advice/" target="_blank">UK NHS Coronavirus-covid-19 - self-isolation-advice</a></li>
             <li><a href="https://www.gov.uk/government/publications/covid-19-stay-at-home-guidance/stay-at-home-guidance-for-households-with-possible-coronavirus-covid-19-infection" target="_blank">UK Govn Stay at Home Guideance for Households with possible Coronavirus-covid-19 infection</a></li>
             <li><a href="https://www.nhs.uk/common-health-questions/accidents-first-aid-and-treatments/how-do-i-take-someones-temperature/" target="_blank">UK NHS First Aid Advice - How do I take someone's temperature?</a></li>
-            <li><a href="https://www.cdc.gov/coronavirus/2019-ncov/downloads/COVID-19_CAREKit_ENG.pdf" target="_blank">US Center for Disease Control and Prevention (CDC) Covid-19 Care Kit booklet (PDF)</a></li>
         </ul>
     </div>
 </div>

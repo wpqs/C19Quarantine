@@ -9,18 +9,13 @@ namespace C19QCalcLib
         public const string SampleDateTime = "14-04-20 10:45 AM";
         public const string DateTimeFormat = "dd-MM-yy h:mm tt";
 
-        public const double DegreesCelsiusMin = 24.0;
-        public const double DegreesCelsiusMax = 43.0;
-        public const double DegreesCelsiusInvalid= 0.0;
-
-        public const string TemperatureKey = "Temperature";
+        public const string HasSymptomsKey = "HasSymptoms";
         public const string StartIsolationKey = "StartIsolation";
         public const string StartSymptomsKey = "StartSymptoms";
 
+        public bool HasSymptoms { get; private set; }
         public DateTime StartIsolation { get; private set; }
         public DateTime? StartSymptoms { get; private set; }
-        public double Temperature { get; private set; }
-
         public string TimeZoneId { get; private set;  }
         public string CultureName { get; private set; }
 
@@ -35,8 +30,8 @@ namespace C19QCalcLib
             NowUtc = DateTime.UtcNow;
             NowLocal = NowUtc.ConvertUtcToLocalTime(timeZoneIdName);
 
+            HasSymptoms = false;
             StartIsolation = Extensions.DateTimeError;
-            Temperature = DegreesCelsiusInvalid;
             StartSymptoms = null;
         }
         
@@ -48,9 +43,9 @@ namespace C19QCalcLib
 
             if (ValidatePropKeys(props))
             {
-                var error = ValidateTemperature((string)props.FirstOrDefault(x => x.Key == TemperatureKey).Value);
+                var error = ValidateHasSymptoms((string)props.FirstOrDefault(x => x.Key == HasSymptomsKey).Value);
                 if (error != null)
-                    AddError(TemperatureKey, error);
+                    AddError(HasSymptomsKey, error);
                 error = ValidateStartIsolation((string)props.FirstOrDefault(x => x.Key == StartIsolationKey).Value);
                 if (error != null)
                     AddError(StartIsolationKey, error);
@@ -68,7 +63,7 @@ namespace C19QCalcLib
 
             if (base.ValidatePropKeys(props) && (props?.Length == 4))
             {
-                if (Keys.Contains(TemperatureKey) && Keys.Contains(StartIsolationKey) && Keys.Contains(StartSymptomsKey))
+                if (Keys.Contains(HasSymptomsKey) && Keys.Contains(StartIsolationKey) && Keys.Contains(StartSymptomsKey))
                     rc = true;
             }
             return rc;
@@ -76,40 +71,34 @@ namespace C19QCalcLib
 
         public override bool IsValid() 
         { 
-            return ((Temperature.CompareTo(DegreesCelsiusInvalid) != 0) && (StartIsolation.CompareTo(Extensions.DateTimeError) != 0) && (StartSymptoms?.CompareTo(Extensions.DateTimeError) ?? 1) != 0); 
+            return ((StartIsolation.CompareTo(Extensions.DateTimeError) != 0) && (StartSymptoms?.CompareTo(Extensions.DateTimeError) ?? 1) != 0); 
         }
-        public string ValidateTemperature(string temperature)
+
+        public string ValidateHasSymptoms(string hasSymptoms)
         {
             string rc = null;
 
-            Temperature = DegreesCelsiusInvalid;
+            HasSymptoms = false;
 
-            if (string.IsNullOrEmpty(TimeZoneId) || (string.IsNullOrEmpty(CultureName)))
-                rc = $"{ProgramErrorMsg} 200. Please report this problem.";
+            if (string.IsNullOrEmpty(CultureName))
+                rc = $"{ProgramErrorMsg} 110. Please report this problem.";
             else
             {
                 try
                 {
-                    if (string.IsNullOrEmpty(temperature))
+                    if (string.IsNullOrEmpty(hasSymptoms))
                         rc = $"This value is required";
                     else
                     {
-                        if (double.TryParse(temperature.Trim(), out var bodyTemp) == false)
-                            rc = $"Please try again with a valid number like 37.0";
+                        if ((hasSymptoms.Equals("yes", StringComparison.OrdinalIgnoreCase) == false) && (hasSymptoms.Equals("no", StringComparison.OrdinalIgnoreCase) == false))
+                            rc = $"Please enter either 'yes' or 'no'";
                         else
-                        {
-                            if ((bodyTemp < DegreesCelsiusMin) || (bodyTemp > DegreesCelsiusMax))
-                                rc = $"Please enter a temperature in the range {DegreesCelsiusMin}-{DegreesCelsiusMax}";
-                            else
-                            {
-                                Temperature = bodyTemp;  //no errors
-                            }
-                        }
+                            HasSymptoms = (hasSymptoms.Equals("yes", StringComparison.OrdinalIgnoreCase));
                     }
                 }
                 catch (Exception e)
                 {
-                    rc = $"{ProgramErrorMsg} 201. {e.Message}";
+                    rc = $"{ProgramErrorMsg} 111. {e.Message}";
                 }
             }
             return rc;

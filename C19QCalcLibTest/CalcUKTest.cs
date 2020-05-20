@@ -12,7 +12,7 @@ namespace C19QCalcLibTest
             var startQuarantine = new DateTime(2020, 1, 1, 17, 23, 0);
             var now = new             DateTime(2020, 1, 1, 17, 22, 59);     //now is earlier than start
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), 37.0);
+            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false);
             var calc = new CalcUk(fred);
 
             Assert.Equal(Extensions.TimeSpanError, calc.GetTimeSpanInIsolation(now.ToUniversalTime()));
@@ -25,7 +25,7 @@ namespace C19QCalcLibTest
             var now =        new DateTime(2020, 1, 1, 17, 22, 59);     //now is earlier than start
             var startQuarantine = now;
             
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), 37.0, startFever.ToUniversalTime());
+            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false, startFever.ToUniversalTime());
             var calc = new CalcUk(fred);
 
             Assert.Equal(Extensions.TimeSpanError, calc.GetTimeSpanInIsolation(now.ToUniversalTime()));
@@ -38,7 +38,7 @@ namespace C19QCalcLibTest
             var startQuarantine = now;
             var startFever = new DateTime(2020, 1, 1, 17, 22, 59);
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), 37.0, startFever.ToUniversalTime());
+            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false, startFever.ToUniversalTime());
             var calc = new CalcUk(fred);
 
             Assert.Equal(Extensions.TimeSpanError, calc.GetTimeSpanInIsolation(now.ToUniversalTime()));
@@ -46,25 +46,25 @@ namespace C19QCalcLibTest
 
 
         [Fact]
-        public void FeverAtNegDayFailTest()
+        public void SymptomsAtNegDayFailTest()
         {
             var startQuarantine = new DateTime(2020, 4, 1, 17, 30, 0);
             var startFever = new DateTime(2020, 4, 2, 17, 30, 0);
             var now = new DateTime(2020, 4, 2, 17, 29, 59);
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), 39.0, startFever);
+            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), true, startFever);
             var calc = new CalcUk(fred);
 
             Assert.Equal(Extensions.TimeSpanError, calc.GetTimeSpanInIsolation(now.ToUniversalTime()));
         }
 
         [Fact]
-        public void FeverNowTest()
+        public void SymptomsNowTest()
         {
             var startQuarantine = new DateTime(2020, 4, 1, 17, 30, 0);
             var now =             new DateTime(2020, 4, 1, 17, 30, 1);
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), 39.0);
+            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), true);
             var calc = new CalcUk(fred);
 
             var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
@@ -76,13 +76,13 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void FeverAtSameDayTest()
+        public void SymptomsAtSameDayTest()
         {
             var startQuarantine = new DateTime(2020, 4, 1, 17, 30, 0);
             var startFever = new DateTime(2020, 4, 1, 17, 30, 0);
             var now = new DateTime(2020, 4, 1, 17, 30, 0);
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), 39.0, startFever.ToUniversalTime());
+            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), true, startFever.ToUniversalTime());
             var calc = new CalcUk(fred);
 
             var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
@@ -94,13 +94,13 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void FeverAtDay0Test()
+        public void SymptomsAtDay0Test()
         {
             var startQuarantine = new DateTime(2020, 4, 1, 17, 30, 0);
             var startFever = new DateTime(2020, 4, 1, 17, 30, 0);
             var now = new DateTime(2020, 4, 1, 17, 30, 1);
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), 39.0, startFever.ToUniversalTime());
+            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), true, startFever.ToUniversalTime());
             var calc = new CalcUk(fred);
 
             var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
@@ -112,13 +112,13 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void FeverAtDay1Test()
+        public void SymptomsAtDay1Test()
         {
             var startQuarantine = new DateTime(2020, 4, 1, 17, 30, 0);
             var startFever = new DateTime(2020, 4, 2, 17, 30, 0);
             var now = new DateTime(2020, 4, 2, 17, 30, 0);
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), 39.0, startFever.ToUniversalTime());
+            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), true, startFever.ToUniversalTime());
             var calc = new CalcUk(fred);
 
             var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
@@ -130,13 +130,13 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void FeverAtDay2Test()
+        public void SymptomsAtDay2Test()
         {
             var startQuarantine = new DateTime(2020, 4, 1, 17, 30, 0);
             var startFever = new DateTime(2020, 4, 3, 17, 30, 0);
             var now = new DateTime(2020, 4, 3, 17, 30, 1);
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), 39.0, startFever.ToUniversalTime());
+            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), true, startFever.ToUniversalTime());
             var calc = new CalcUk(fred);
 
             var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
@@ -148,13 +148,13 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void Fever13DaysAfterStartIsolationTest()
+        public void Symptoms13DaysAfterStartIsolationTest()
         {
             var startQuarantine = new DateTime(2020, 1, 1, 17, 23, 0);
             var startFever = new DateTime(2020, 1, 14, 17, 23, 0);
             var now = new DateTime(2020, 1, 14, 17, 23, 0);
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), 37.0, startFever.ToUniversalTime());
+            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), true, startFever.ToUniversalTime());
             var calc = new CalcUk(fred);
 
             var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
@@ -166,13 +166,13 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void Fever14DaysAfterStartIsolationTest()    //It could be argued that the self-isolation is complete so fever is irrelevant, but side with caution
+        public void Symptoms14DaysAfterStartIsolationTest()    //It could be argued that the self-isolation is complete so fever is irrelevant, but side with caution
         {
             var startQuarantine = new DateTime(2020, 1, 1, 17, 23, 0);
             var startFever =      new DateTime(2020, 1, 15, 17, 23, 0);
             var now =             new DateTime(2020, 1, 15, 17, 23, 0);
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), 37.0, startFever.ToUniversalTime());
+            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false, startFever.ToUniversalTime());
             var calc = new CalcUk(fred);
 
             var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
@@ -185,12 +185,12 @@ namespace C19QCalcLibTest
 
 
         [Fact]
-        public void NoFeverSameTimeTest()
+        public void NoSymptomsSameTimeTest()
         {
             var startQuarantine = new DateTime(2020, 1, 1, 17, 23, 0);
             var now = new             DateTime(2020, 1, 1, 17, 23, 0);     //now is same as start
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), 37.0);
+            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false);
             var calc = new CalcUk(fred);
 
             var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
@@ -202,12 +202,12 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void NoFeverNowTest()
+        public void NoSymptomsNowTest()
         {
             var startQuarantine = new DateTime(2020, 4, 1, 17, 30, 0);
             var now =             new DateTime(2020, 4, 1, 17, 30, 1);
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), 37.0);
+            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false);
             var calc = new CalcUk(fred);
 
             var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
@@ -219,12 +219,12 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void NoFever0DayHourTest()
+        public void NoSymptoms0DayHourTest()
         {
             var startQuarantine = new DateTime(2020, 1, 1, 0, 0, 0);
             var now = new             DateTime(2020, 1, 1, 23, 59, 59);     
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), 37.0);
+            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false);
 
             var calc = new CalcUk(fred);
 
@@ -237,12 +237,12 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void NoFever0DayLessThan24HourTest()
+        public void NoSymptoms0DayLessThan24HourTest()
         {
             var startQuarantine = new DateTime(2020, 1, 1, 17, 30, 0);
             var now = new             DateTime(2020, 1, 2, 17, 29, 59);  
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), 37.0);
+            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false);
             var calc = new CalcUk(fred);
 
             var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
@@ -254,13 +254,13 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void FeverNormalAfterDay0Test()
+        public void NoSymptomsAfterDay0Test()
         {
             var startQuarantine = new DateTime(2020, 4, 1, 17, 30, 0);
             var startFever =      new DateTime(2020, 4, 1, 17, 30, 0);
             var now =             new DateTime(2020, 4, 1, 17, 30, 1);
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), 37.0, startFever.ToUniversalTime());
+            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false, startFever.ToUniversalTime());
             var calc = new CalcUk(fred);
 
             var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
@@ -272,13 +272,13 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void FeverNormalAfterDay1Test()
+        public void NoSymptomsAfterDay1Test()
         {
             var startQuarantine = new DateTime(2020, 4, 1, 17, 30, 0);
             var startFever =      new DateTime(2020, 4, 1, 17, 30, 0);
             var now =             new DateTime(2020, 4, 2, 17, 30, 1);
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), 37.0, startFever.ToUniversalTime());
+            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false, startFever.ToUniversalTime());
             var calc = new CalcUk(fred);
 
             var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
@@ -288,7 +288,7 @@ namespace C19QCalcLibTest
             Assert.Equal(59, quarantine.Minutes);
             Assert.Equal(59, quarantine.Seconds);
 
-            var mary = new C19QCalcLib.Record("Mary", startQuarantine.ToUniversalTime(), 39.0, startFever.ToUniversalTime());
+            var mary = new C19QCalcLib.Record("Mary", startQuarantine.ToUniversalTime(), true, startFever.ToUniversalTime());
             var calc2 = new CalcUk(mary);
 
             quarantine = calc2.GetTimeSpanInIsolation(now.ToUniversalTime());
@@ -300,13 +300,13 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void FeverNormalAfterDay5Test()
+        public void NoSymptomsAfterDay5Test()
         {
             var startQuarantine = new DateTime(2020, 4, 1, 17, 30, 0);
             var startFever =      new DateTime(2020, 4, 1, 17, 30, 0);
             var now =             new DateTime(2020, 4, 6, 17, 30, 1);
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), 37.0, startFever.ToUniversalTime());
+            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false, startFever.ToUniversalTime());
             var calc = new CalcUk(fred);
 
             var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
@@ -316,7 +316,7 @@ namespace C19QCalcLibTest
             Assert.Equal(59, quarantine.Minutes);
             Assert.Equal(59, quarantine.Seconds);
 
-            var mary = new C19QCalcLib.Record("Mary", startQuarantine.ToUniversalTime(), 39.0, startFever.ToUniversalTime());
+            var mary = new C19QCalcLib.Record("Mary", startQuarantine.ToUniversalTime(), true, startFever.ToUniversalTime());
             var calc2 = new CalcUk(mary);
 
             quarantine = calc2.GetTimeSpanInIsolation(now.ToUniversalTime());
@@ -328,13 +328,13 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void FeverNormalAfterDay6Test()  //temperature normal on 6th day
+        public void NoSymptomsAfterDay6Test()  //temperature normal on 6th day
         {
             var startQuarantine = new DateTime(2020, 4, 1, 17, 30, 0);
             var startFever =      new DateTime(2020, 4, 1, 17, 30, 0);
             var now =             new DateTime(2020, 4, 7, 17, 30, 0);
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), 37.0, startFever.ToUniversalTime());
+            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false, startFever.ToUniversalTime());
             var calc = new CalcUk(fred);
 
             var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
@@ -344,7 +344,7 @@ namespace C19QCalcLibTest
             Assert.Equal(0, quarantine.Minutes);
             Assert.Equal(0, quarantine.Seconds);
 
-            var mary = new C19QCalcLib.Record("Mary", startQuarantine.ToUniversalTime(), 39.0, startFever.ToUniversalTime());
+            var mary = new C19QCalcLib.Record("Mary", startQuarantine.ToUniversalTime(), true, startFever.ToUniversalTime());
             var calc2 = new CalcUk(mary);
 
             quarantine = calc2.GetTimeSpanInIsolation(now.ToUniversalTime());
@@ -357,13 +357,13 @@ namespace C19QCalcLibTest
 
 
         [Fact]
-        public void FeverNormalAfterDay7Test() //temperature normal on 7th day
+        public void NoSymptomsAfterDay7Test() //temperature normal on 7th day
         {
             var startQuarantine = new DateTime(2020, 4, 1, 17, 30, 0);
             var startFever =      new DateTime(2020, 4, 1, 17, 30, 0);
             var now =             new DateTime(2020, 4, 8, 17, 30, 0);
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), 37.0, startFever.ToUniversalTime());
+            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false, startFever.ToUniversalTime());
             var calc = new CalcUk(fred);
 
             var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
@@ -373,7 +373,7 @@ namespace C19QCalcLibTest
             Assert.Equal(0, quarantine.Minutes);
             Assert.Equal(0, quarantine.Seconds);
 
-            var mary = new C19QCalcLib.Record("Mary", startQuarantine.ToUniversalTime(), 39.0, startFever.ToUniversalTime());
+            var mary = new C19QCalcLib.Record("Mary", startQuarantine.ToUniversalTime(), true, startFever.ToUniversalTime());
             var calc2 = new CalcUk(mary);
 
             quarantine = calc2.GetTimeSpanInIsolation(now.ToUniversalTime());
@@ -385,13 +385,13 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void FeverNormalAfterDay8Test() //temperature normal on 8th day
+        public void NoSymptomsAfterDay8Test() //temperature normal on 8th day
         {
             var startQuarantine = new DateTime(2020, 4, 1, 17, 30, 0);
             var startFever =      new DateTime(2020, 4, 1, 17, 30, 0);
             var now =             new DateTime(2020, 4, 9, 17, 30, 0);
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), 37.0, startFever.ToUniversalTime());
+            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false, startFever.ToUniversalTime());
             var calc = new CalcUk(fred);
 
             var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
@@ -401,7 +401,7 @@ namespace C19QCalcLibTest
             Assert.Equal(0, quarantine.Minutes);
             Assert.Equal(0, quarantine.Seconds);
 
-            var mary = new C19QCalcLib.Record("Mary", startQuarantine.ToUniversalTime(), 39.0, startFever.ToUniversalTime());
+            var mary = new C19QCalcLib.Record("Mary", startQuarantine.ToUniversalTime(), true, startFever.ToUniversalTime());
             var calc2 = new CalcUk(mary);
 
             quarantine = calc2.GetTimeSpanInIsolation(now.ToUniversalTime());
@@ -413,13 +413,13 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void FeverNormalAfterDay9Test() //temperature normal on 9th day
+        public void NoSymptomsAfterDay9Test() //no symptoms on 9th day
         {
             var startQuarantine = new DateTime(2020, 4, 1, 17, 30, 0);
             var startFever =      new DateTime(2020, 4, 1, 17, 30, 0);
             var now =             new DateTime(2020, 4, 10, 17, 30, 1);
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine, 37.0, startFever);
+            var fred = new C19QCalcLib.Record("Fred", startQuarantine, false, startFever);
             var calc = new CalcUk(fred);
 
             var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
@@ -429,7 +429,7 @@ namespace C19QCalcLibTest
             Assert.Equal(0, quarantine.Minutes);
             Assert.Equal(0, quarantine.Seconds);
 
-            var mary = new C19QCalcLib.Record("Mary", startQuarantine, 39.0, startFever);
+            var mary = new C19QCalcLib.Record("Mary", startQuarantine, true, startFever);
             var calc2 = new CalcUk(mary);
 
             quarantine = calc2.GetTimeSpanInIsolation(now.ToUniversalTime());
@@ -442,12 +442,12 @@ namespace C19QCalcLibTest
 
 
         [Fact]
-        public void NoFeverDay0Test()
+        public void NoSymptomsDay0Test()
         {
             var startQuarantine = new DateTime(2020, 1, 1, 17, 23, 0);
             var now = new DateTime(2020, 1, 1, 17, 23, 1);
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), 37.0);
+            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false);
             var calc = new CalcUk(fred);
 
             var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
@@ -459,12 +459,12 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void NoFever1DayTest()
+        public void NoSymptoms1DayTest()
         {
             var startQuarantine = new DateTime(2020, 1, 1, 17, 30, 0);
             var now = new             DateTime(2020, 1, 2, 17, 30, 1);  
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), 37.0);
+            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false);
             var calc = new CalcUk(fred);
 
             var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
@@ -476,12 +476,12 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void NoFever2DayTest()
+        public void NoSymptoms2DayTest()
         {
             var startQuarantine = new DateTime(2020, 1, 1, 17, 30, 0);
             var now = new             DateTime(2020, 1, 3, 17, 30, 1);  
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), 37.0);
+            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false);
             var calc = new CalcUk(fred);
 
             var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
@@ -493,12 +493,12 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void NoFever12DayTest()
+        public void NoSymptoms12DayTest()
         {
             var startQuarantine = new DateTime(2020, 4, 1, 17, 30, 0);
             var now = new             DateTime(2020, 4, 13, 17, 30, 1);  
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), 37.0);
+            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false);
             var calc = new CalcUk(fred);
 
             var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
@@ -510,12 +510,12 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void NoFever13DayTest()
+        public void NoSymptoms13DayTest()
         {
             var startQuarantine = new DateTime(2020, 1, 1, 17, 30, 0);
             var now = new             DateTime(2020, 1, 14, 17, 30, 1);  
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), 37.0);
+            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false);
             var calc = new CalcUk(fred);
 
             var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
@@ -527,12 +527,12 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void NoFever13DayDiffMonthTest()
+        public void NoSymptoms13DayDiffMonthTest()
         {
             var startQuarantine = new DateTime(2020, 3, 30, 17, 30, 0);
             var now = new             DateTime(2020, 4, 12, 17, 30, 1);  
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), 37.0);
+            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false);
             var calc = new CalcUk(fred);
 
             var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
@@ -544,12 +544,12 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void NoFever14DayTest()
+        public void NoSymptoms14DayTest()
         {
             var startQuarantine = new DateTime(2020, 1, 1, 17, 30, 0);
             var now = new             DateTime(2020, 1, 15, 17, 30, 1);  
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), 37.0);
+            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false);
             var calc = new CalcUk(fred);
 
             var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
@@ -561,12 +561,12 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void NoFever15DayTest()
+        public void NoSymptoms15DayTest()
         {
             var startQuarantine = new DateTime(2020, 4, 1, 17, 30, 0);
             var now = new             DateTime(2020, 4, 16, 17, 30, 1); 
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), 37.0);
+            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false);
             var calc = new CalcUk(fred);
 
             var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());

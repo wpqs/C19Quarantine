@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Version>1.1.30.3</Version>
+    <Version>1.2.30.0</Version>
     <Authors>Will Stott</Authors>
     <Company>Maximodex</Company>
     <Product>C19Quarantine</Product>
