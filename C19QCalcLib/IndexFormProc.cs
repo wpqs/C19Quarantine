@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using NodaTime;
 
 namespace C19QCalcLib
 {
-    public class IndexForm : MxFormProc
+    public class IndexFormProc : MxFormProc
     {
-        public const string SampleDateTime = "14-04-20 10:45 AM";
+        public const string SampleDateTime = "14-04-2020 10:45 AM";
         public const string DateTimeFormat = "dd-MM-yy h:mm tt";
 
         public const string HasSymptomsKey = "HasSymptoms";
@@ -14,24 +15,23 @@ namespace C19QCalcLib
         public const string StartSymptomsKey = "StartSymptoms";
 
         public bool HasSymptoms { get; private set; }
-        public DateTime StartIsolation { get; private set; }
-        public DateTime? StartSymptoms { get; private set; }
-        public string TimeZoneId { get; private set;  }
-        public string CultureName { get; private set; }
+        public Instant StartIsolation { get; private set; }
+        public Instant? StartSymptoms { get; private set; }
+        public string TzDbName { get; private set;  }
+        public string CultureTag { get; private set; }
+        public bool WithoutDaylightSavings { get; private set; }
+        public Instant NowInstance { get; private set; }
 
-        public DateTime NowUtc { get; private set; }
-        public DateTime NowLocal { get; private set; }
-
-        
-        public IndexForm(string timeZoneIdName, string cultureName) 
+        public IndexFormProc(IClock clock, string tzDbNameName, string cultureTag, bool withoutDaylightSavings)
         {
-            TimeZoneId = timeZoneIdName;
-            CultureName = cultureName;
-            NowUtc = DateTime.UtcNow;
-            NowLocal = NowUtc.ConvertUtcToLocalTime(timeZoneIdName);
+            TzDbName = tzDbNameName;
+            CultureTag = cultureTag;
+            WithoutDaylightSavings = withoutDaylightSavings;
+
+            NowInstance = clock?.GetCurrentInstant() ?? ExtNodatime.InstantError;
 
             HasSymptoms = false;
-            StartIsolation = Extensions.DateTimeError;
+            StartIsolation = ExtNodatime.InstantError;
             StartSymptoms = null;
         }
         
@@ -71,7 +71,7 @@ namespace C19QCalcLib
 
         public override bool IsValid() 
         { 
-            return ((StartIsolation.CompareTo(Extensions.DateTimeError) != 0) && (StartSymptoms?.CompareTo(Extensions.DateTimeError) ?? 1) != 0); 
+            return ((StartIsolation.CompareTo(ExtNodatime.InstantError) != 0) && (StartSymptoms?.CompareTo(ExtNodatime.InstantError) ?? 1) != 0); 
         }
 
         public string ValidateHasSymptoms(string hasSymptoms)
@@ -80,7 +80,7 @@ namespace C19QCalcLib
 
             HasSymptoms = false;
 
-            if (string.IsNullOrEmpty(CultureName))
+            if (string.IsNullOrEmpty(CultureTag))
                 rc = $"{ProgramErrorMsg} 110. Please report this problem.";
             else
             {
@@ -108,26 +108,26 @@ namespace C19QCalcLib
         {
             string rc = null;
 
-            StartIsolation = Extensions.DateTimeError;
+            StartIsolation = ExtNodatime.InstantError;
 
-            if (string.IsNullOrEmpty(TimeZoneId) || (string.IsNullOrEmpty(CultureName)))
+            if (string.IsNullOrEmpty(TzDbName) || (string.IsNullOrEmpty(CultureTag)))
                 rc = $"{ProgramErrorMsg} 210. Please report this problem.";
             else
             {
                 try
                 {
+                    DateTimeZone zone = DateTimeZoneProviders.Tzdb[TzDbName];
                     if (string.IsNullOrEmpty(startQuarantineLocal))
                         rc = $"This value is required";
                     else
                     {
-                        var isolation = startQuarantineLocal.ConvertLocalTimeToUtcDateTime(TimeZoneId, CultureName);
-                        if (isolation.IsError())
+                        if (startQuarantineLocal.ParseDateTime(zone, WithoutDaylightSavings, CultureTag, MxCultureInfo.FormatType.DateTime, false, out var isolation) == false)
                             rc = $"Please try again with a valid date/time like {SampleDateTime}";
                         else
                         {
-                            var span = NowUtc - isolation;
+                            var span = NowInstance - isolation;
                             if (span.TotalSeconds < 0)
-                                rc = $"This value is after the current time. Please try again with value before {NowLocal.ToString(DateTimeFormat)}";
+                                rc = $"This value is after the current time. Please try again with value before {NowInstance.ToString(CultureTag, zone)}";
                             else
                             {
                                 StartIsolation = isolation;  //no errors
@@ -147,35 +147,35 @@ namespace C19QCalcLib
         {
             string rc = null;
 
-            StartSymptoms = Extensions.DateTimeError;
+            StartSymptoms = ExtNodatime.InstantError;
 
-            if (string.IsNullOrEmpty(TimeZoneId) || (string.IsNullOrEmpty(CultureName)))
+            if (string.IsNullOrEmpty(TzDbName) || (string.IsNullOrEmpty(CultureTag)))
                 rc = $"{ProgramErrorMsg} 220. Please report this problem.";
             else
             {
                 try
                 {
+                    DateTimeZone zone = DateTimeZoneProviders.Tzdb[TzDbName];
                     if (string.IsNullOrEmpty(startSymptomsLocal))
                         StartSymptoms = null;  //Ok, as value is optional
                     else
                     {
-                        var symptoms = startSymptomsLocal.ConvertLocalTimeToUtcDateTime(TimeZoneId, CultureName);
-                        if (symptoms.IsError())
+                        if (startSymptomsLocal.ParseDateTime(zone, WithoutDaylightSavings, CultureTag, MxCultureInfo.FormatType.DateTime, false, out var symptoms) == false)
                             rc = $"Please try again with a valid date/time like {SampleDateTime}";
                         else
                         {
-                            var span = NowUtc - symptoms;
+                            var span = NowInstance - symptoms;
                             if (span.TotalSeconds < 0)
-                                rc = $"This value is after the current time. Please try again with value before {NowLocal.ToString(DateTimeFormat)}";
+                                rc = "This value is after the current time";
                             else
                             {
-                                if (StartIsolation.CompareTo(Extensions.DateTimeError) == 0)
+                                if (StartIsolation.IsError())
                                     rc = $"You must set the start of your self-isolation before giving the start of your symptoms";
                                 else
                                 {
                                     span = symptoms - StartIsolation;
                                     if (span.TotalSeconds < 0)
-                                        rc = $"This value is before the start of your self-isolation. If your symptoms started before you entered self-isolation then enter {StartIsolation.ConvertUtcToLocalTime(TimeZoneId).ToString(DateTimeFormat)} as the start of your symptoms and try again";
+                                        rc = $"This value is before the start of your self-isolation. If your symptoms started before you entered self-isolation then enter {StartIsolation.ToString(CultureTag, zone)} as the start of your symptoms and try again";
                                     else
                                     {
                                         StartSymptoms = symptoms;

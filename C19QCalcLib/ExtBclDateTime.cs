@@ -5,11 +5,12 @@ using System.Globalization;
 namespace C19QCalcLib
 {
     [SuppressMessage("ReSharper", "UnusedVariable")]
-    public static class Extensions
+    public static class ExtBclDateTime
     {
         public static readonly DateTimeOffset DateTimeOffsetError = DateTimeOffset.MaxValue;
         public static readonly DateTime DateTimeError = DateTime.MaxValue;
         public static readonly TimeSpan TimeSpanError = TimeSpan.MaxValue;
+
 
         public static bool IsError(this DateTimeOffset source)
         {

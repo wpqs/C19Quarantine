@@ -4,15 +4,29 @@
     ViewData["Title"] = "Settings";
 }
 
-<h1>Settings</h1>
+<h3>User Settings</h3>
 
-<form method="post">
-    <div class="form-group">
-        <label asp-for="Selected" class="col-form-label">Set Time Zone</label>
-        <select asp-for="Selected" asp-items="Model.Zones.Items"></select>
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div class="form-group">
+                <label asp-for="SelectedTimeZone" class="col-form-label">Set your Time Zone</label>
+                <select class="form-control" asp-for="SelectedTimeZone" asp-items="Model.SupportedAppTimeZones.Items"></select>
+                <span asp-validation-for="SelectedTimeZone" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="WithoutDaylightSaving" >&nbsp;&nbsp;&nbsp;Do not adjust for daylight savings
+            </div>
+            <div class="form-group">
+                <label asp-for="SelectedCulture" class="col-form-label">Set your Language and Region</label>
+                <select class="form-control" asp-for="SelectedCulture" asp-items="Model.SupportedAppCultures.Items"></select>
+                <span asp-validation-for="SelectedCulture" class="text-danger"></span>
+            </div>            
+            <div class="form-group">
+                <input id="SubmitButton" type="submit" value="Set" class="btn btn-primary"/>
+            </div>
+            <span asp-validation-for="ProgramError" class="text-danger"></span>
+        </form>
     </div>
-    <div class="form-group">
-        <input id="SubmitButton" type="submit" value="Set" class="btn btn-primary"/>
-    </div>    
-</form>
+</div>
 

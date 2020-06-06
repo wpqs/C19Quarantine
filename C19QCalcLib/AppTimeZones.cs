@@ -6,21 +6,62 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace C19QCalcLib
 {
-    public class TimeZones
+    public class AppTimeZones
     {
+        public const string CookieTzName = "C19TimeZoneSetting";
+        public const string CookieWithoutDaylightSaving = "C19WithoutDaylightSaving";
+        public const string CookieWithoutDaylightSavingValueYes = "yes";
+        public const string CookieWithoutDaylightSavingValueNo = "no";
+        public const int CookieExpiryDays = 3;
+
+        public const string AcronymGmt = "GMT";
+        public const string AcronymCet = "CET";
+
+        public const string DefaultTzDbName = "Europe/London";
+        public const string DefaultAcronym = AcronymGmt;
+
         public string Selected { get; set; }
         public List<SelectListItem> Items { get; set; }
-        public string GetDefault() { return (Items.Count > 0) ? Items[0].Value : "[error]"; }
-
-        public TimeZones()
+        public AppTimeZones()
         {
             Items = new List<SelectListItem>
             {
-                new SelectListItem("Greenwich Mean Time", "GMT", (Selected == "GMT")),
-                new SelectListItem("Central European Time", "CET", (Selected == "CET")),
-                new SelectListItem("Indian Standard Time", "IST", (Selected == "IST"))
+                new SelectListItem("Greenwich Mean Time", AcronymGmt, (Selected == AcronymGmt)), 
+                new SelectListItem("Central European Time", AcronymCet, (Selected == AcronymCet)) 
             };
-            Selected = GetDefault();
+            Selected = DefaultAcronym;
+        }
+
+        public static string GetDaylightSavingName(string zoneAcronym)
+        {
+            var rc = "British Summer Time";
+            if (string.IsNullOrEmpty(zoneAcronym) == false)
+            {
+                if (zoneAcronym == AcronymCet)
+                    rc = "Central Europe Summer Time";
+            }
+            return rc;
+        }
+
+        public static string GetDaylightSavingAcronym(string zoneAcronym)
+        {
+            var rc = "BST";
+            if (string.IsNullOrEmpty(zoneAcronym) == false)
+            {
+                if (zoneAcronym == AcronymCet)
+                    rc = "CEST";
+            }
+            return rc;
+        }
+        public static string GetTzDbName(string zoneAcronym)
+        {
+            var rc = DefaultTzDbName;
+            if (string.IsNullOrEmpty(zoneAcronym) == false)
+            {
+                if (zoneAcronym == AcronymCet)
+                    rc = "Europe/Paris";
+            }
+            return rc;
         }
 
         public static string GetReport(string startOfLine, string endOfLine, string tab, string endOfRecord, string timeZoneId=null)

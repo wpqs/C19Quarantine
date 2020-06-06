@@ -1,48 +1,50 @@
-﻿using System;
+﻿using NodaTime;
 
 namespace C19QCalcLib
 {
     public class CalcUk : ICalc
     {
-        private readonly int QuarantinePeriodNoSymptoms = 14;
-        private readonly int QuarantinePeriodWithSymptoms = 7;
+        private const int QuarantinePeriodNoSymptoms = 14;
+        private const int QuarantinePeriodWithSymptoms = 7;
 
-        private readonly TimeSpan _quarantineSpanNoSymptoms = new TimeSpan(14,0,0,0);
-        private readonly TimeSpan _quarantineSpanWithSymptoms = new TimeSpan(7, 0, 0, 0);
-        private readonly Record _record;
+        private readonly Duration _quarantineSpanNoSymptoms = Duration.FromDays(QuarantinePeriodNoSymptoms); 
+        private readonly Duration _quarantineSpanWithSymptoms = Duration.FromDays(QuarantinePeriodWithSymptoms);
+        private readonly IsolateRecord _isolateRecord;
 
-        public bool IsSymptomatic() { return _record?.HasSymptoms ?? false; }
+        public bool IsSymptomatic() { return _isolateRecord?.HasSymptoms ?? false; }
 
-        public CalcUk(Record record)
+        public CalcUk(IsolateRecord isolateRecord)
         {
-            _record = record;
+            _isolateRecord = isolateRecord;
         }
 
         public int GetIsolationPeriodMax() { return QuarantinePeriodNoSymptoms; }
 
-        public TimeSpan GetTimeSpanInIsolation(DateTime nowUtc)
+        public Duration GetIsolationRemaining(Instant nowInstance)
         {
-            var rc = Extensions.TimeSpanError; //error
+            var rc = ExtNodatime.DurationError; //error
 
-            if ((_record != null) && (nowUtc >= _record.QuarantineStartedUtc) && (nowUtc >= (_record.FirstSymptomsUtc ?? nowUtc)) && ((_record.FirstSymptomsUtc ?? nowUtc) >= _record.QuarantineStartedUtc))
+            if ((_isolateRecord != null) && (nowInstance >= _isolateRecord.QuarantineStarted) 
+                                  && (nowInstance >= (_isolateRecord.FirstSymptoms ?? nowInstance)) 
+                                  && ((_isolateRecord.FirstSymptoms ?? nowInstance) >= _isolateRecord.QuarantineStarted))
             {
-                if (_record.HasSymptoms && (_record.FirstSymptomsUtc == null))
-                    _record.SetFirstSymptoms(nowUtc);
+                if (_isolateRecord.HasSymptoms && (_isolateRecord.FirstSymptoms == null))
+                    _isolateRecord.SetFirstSymptoms(nowInstance);
 
-                var span = nowUtc - (_record.FirstSymptomsUtc ?? _record.QuarantineStartedUtc);
+                var span = nowInstance - (_isolateRecord.FirstSymptoms ?? _isolateRecord.QuarantineStarted);
                 if (span.TotalSeconds >= 0)
                 {
-                    if (_record.FirstSymptomsUtc == null)
-                        rc = (span.Days >= QuarantinePeriodNoSymptoms) ? new TimeSpan(0) : _quarantineSpanNoSymptoms - span;
+                    if (_isolateRecord.FirstSymptoms == null)
+                        rc = (span.Days >= _quarantineSpanNoSymptoms.Days) ? Duration.Zero : _quarantineSpanNoSymptoms - span;
                     else
                     {
                         if (span.Days >= QuarantinePeriodWithSymptoms)
-                            rc =  (_record.HasSymptoms) ? new TimeSpan(1,0,0, 0) : new TimeSpan(0);
+                            rc =  (_isolateRecord.HasSymptoms) ? Duration.FromDays(1) : Duration.Zero;
                         else
                         {
                             var remain = _quarantineSpanWithSymptoms - span;
                             if (remain.Days < 1)
-                                rc = (_record.HasSymptoms) ? new TimeSpan(1, 0, 0, 0) : remain;
+                                rc = (_isolateRecord.HasSymptoms) ? Duration.FromDays(1) : remain;
                             else
                                 rc = remain;
                         }

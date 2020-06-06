@@ -36,7 +36,12 @@ namespace C19QCalcLib
 
         protected void AddError(string propName, string error)
         {
-            Errors.Add(error.Contains(ProgramErrorMsg) ? ProgramErrorKey : propName, error);
+            if ((string.IsNullOrEmpty(propName) == false) && (string.IsNullOrEmpty(error) == false))
+            {
+                var programError = error.Contains(ProgramErrorMsg);
+                if ((programError && (Errors.ContainsKey(ProgramErrorKey) == false)) || ((programError == false) && (Errors.ContainsKey(propName) == false)))
+                    Errors.Add(programError ? ProgramErrorKey : propName, error);
+            }
         }
     }
 }

@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using C19QCalcLib;
 using Microsoft.AspNetCore.Mvc;
+using NodaTime;
 
 namespace C19QuarantineWebApp.Pages
 {
@@ -25,13 +26,29 @@ namespace C19QuarantineWebApp.Pages
         [BindProperty, Required, Display(Name = "above"), StringLength(3, MinimumLength = 2)]
         public string HasSymptoms { get; set; }
 
+        private IClock _clock;
+
+        private string SelectedCultureTab { get; set; }
+        private string SelectedTimeZone { get; set; }
+        private bool  WithoutDaylightSavings { get; set;  }
+        private string SelectedTzDbName { get; set; }
+
+
+
+        public IndexModel()
+        {
+            _clock = SystemClock.Instance;
+        }
+
         public void OnGet()
         {
+            InitialiseSettings();
+
             TextColor = "black";
             Result = $"To calculate the number of days that you must remain in self-isolation provide the above information and then click the calculate button.";
             try
             {
-                StartIsolation = DateTime.UtcNow.ConvertUtcToLocalTimeString(IndexForm.DateTimeFormat, "GMT Standard Time");
+                StartIsolation = _clock.GetCurrentInstant().ToString(SelectedCultureTab, DateTimeZoneProviders.Tzdb[SelectedTzDbName], WithoutDaylightSavings); 
                 ShowRange = false;
             }
             catch (Exception e)
@@ -44,32 +61,34 @@ namespace C19QuarantineWebApp.Pages
         {
             IActionResult rc = Page();
 
-            var form = ProcessForm("GMT Standard Time", "en-GB");   //get time and culture from dropdowns on form
+            InitialiseSettings();
+
+            var form = ProcessForm(SelectedTzDbName ?? AppTimeZones.DefaultTzDbName, SelectedCultureTab ?? AppCultures.DefaultTab);   //get time and culture from dropdowns on form
 
             if (ModelState.IsValid && (form != null))
             {
                 TextColor = "red";
                 try
                 {
-                    var nowUtc = DateTime.UtcNow;
-                    var record = new Record("Fred", form.StartIsolation, form.HasSymptoms, form.StartSymptoms);
+                    var nowInstance = _clock.GetCurrentInstant();
+                    var record = new IsolateRecord("Fred", form.StartIsolation, form.HasSymptoms, form.StartSymptoms);
                     var calc = new CalcUk(record);
 
                     IsolationDaysMax = calc.GetIsolationPeriodMax();
 
                     if (calc.IsSymptomatic() && (form.StartSymptoms == null))
-                        StartSymptoms = nowUtc.ConvertUtcToLocalTime("GMT Standard Time").ToString(IndexForm.DateTimeFormat);
+                        StartSymptoms = nowInstance.ToString(SelectedCultureTab, DateTimeZoneProviders.Tzdb[SelectedTzDbName], WithoutDaylightSavings); 
                     else
                         StartSymptoms = StartSymptoms;
 
                     ShowRange = true;
-                    var span = calc.GetTimeSpanInIsolation(nowUtc);
+                    var span = calc.GetIsolationRemaining(nowInstance);
                     if (span.IsError())
                         ModelState.TryAddModelError(nameof(ProgramError), $"{MxFormProc.ProgramErrorMsg} 101: An internal error has been detected. Please report this problem");
                     else if (span.TotalMinutes > 0)
                     {
                         TextColor = "orange";
-                        Result = $"The time remaining for your self-isolation is {span.ToStringRemainingDaysHours()}";
+                        Result = $"The time remaining for your self-isolation is {span.ToStringRemainingTime()}"; 
                         IsolationDaysRemaining = ((int) span.TotalDays) + 1;
                     }
                     else
@@ -87,13 +106,13 @@ namespace C19QuarantineWebApp.Pages
             return rc;
         }
 
-        public IndexForm ProcessForm(string timeZoneId, string culture)
+        public IndexFormProc ProcessForm(string tzDbName, string cultureTab)
         {
-            IndexForm rc = null;
+            IndexFormProc rc = null;
 
             if (ModelState.IsValid)
             {
-                var form = new IndexForm(timeZoneId, culture);
+                var form = new IndexFormProc(_clock, tzDbName, cultureTab, WithoutDaylightSavings);
 
                 var paramList = new List<KeyValuePair<string, object>>()
                 {
@@ -116,6 +135,23 @@ namespace C19QuarantineWebApp.Pages
                 }
             }
             return rc;
+        }
+
+        private void InitialiseSettings()
+        {
+            SelectedCultureTab = AppCultures.DefaultTab;
+            if (Request.Cookies[AppCultures.CookieName] != null)
+                SelectedCultureTab = Request.Cookies[AppCultures.CookieName];
+
+            SelectedTimeZone = AppTimeZones.DefaultAcronym;
+            if (Request.Cookies[AppTimeZones.CookieTzName] != null)
+                SelectedTimeZone = Request.Cookies[AppTimeZones.CookieTzName];
+
+            WithoutDaylightSavings = false; //apply daylight savings during summer time - default
+            if (Request.Cookies[AppTimeZones.CookieWithoutDaylightSaving] != null)
+                WithoutDaylightSavings = (AppTimeZones.CookieWithoutDaylightSavingValueYes == Request.Cookies[AppTimeZones.CookieWithoutDaylightSaving]);
+
+            SelectedTzDbName = AppTimeZones.GetTzDbName(SelectedTimeZone);
         }
     }
 }

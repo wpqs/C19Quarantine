@@ -1,580 +1,253 @@
 using System;
 using C19QCalcLib;
+using NodaTime;
+using NodaTime.Testing;
 using Xunit;
 
 namespace C19QCalcLibTest
 {
     public class CalcUkTest
     {
+        private readonly IClock _clock;
+        private readonly DateTimeZone _zoneGmt;
+        private readonly LocalDateTime _localClock;
+
+        public CalcUkTest()
+        {
+            _zoneGmt = DateTimeZoneProviders.Tzdb["Europe/London"];
+            _localClock = new LocalDateTime(2020, 01, 30, 17, 45, 59);
+            _clock = new FakeClock(_localClock.InZoneStrictly(_zoneGmt).ToInstant());
+        }
+        [Fact]
+        public void GetIsolationPeriodMaxTest()
+        {
+            var startQuarantine = _localClock.InZoneStrictly(_zoneGmt).ToInstant();
+
+            var fred = new IsolateRecord("Fred", startQuarantine, false);
+            var calc = new CalcUk(fred);
+
+            Assert.Equal(14, calc.GetIsolationPeriodMax()); 
+        }
+
+        [Fact]
+        public void NoSymptomsTest()
+        {
+            var startQuarantine = _localClock.InZoneStrictly(_zoneGmt).ToInstant();
+
+            var fred = new IsolateRecord("Fred", startQuarantine, false);
+            var calc = new CalcUk(fred);
+
+            Assert.Equal(Duration.FromDays(14), calc.GetIsolationRemaining(_clock.GetCurrentInstant())); //now same as startQuarantine
+        }
+
+        [Fact]
+        public void SymptomsTest()
+        {
+            var startQuarantine = _localClock.InZoneStrictly(_zoneGmt).ToInstant();
+
+            var fred = new IsolateRecord("Fred", startQuarantine, true);
+            var calc = new CalcUk(fred);
+
+            Assert.Equal(Duration.FromDays(7), calc.GetIsolationRemaining(_clock.GetCurrentInstant())); //now same as startQuarantine
+        }
+
+        [Fact]
+        public void NoSymptomsFeverAfterStartTest()
+        {
+            var startQuarantine = _localClock.InZoneStrictly(_zoneGmt).ToInstant().Minus(Duration.FromHours(3));
+            var startFever = startQuarantine.Plus(Duration.FromHours(1));
+
+            var fred = new IsolateRecord("Fred", startQuarantine, false, startFever);
+            var calc = new CalcUk(fred);
+
+            Assert.Equal(Duration.FromHours((6 * 24) + 22), calc.GetIsolationRemaining(_clock.GetCurrentInstant())); //now 3 hours after startQuarantine and 2 hours after startFever
+        }
+
+        [Fact]
+        public void SymptomsFeverAfterStartTest()
+        {
+            var startQuarantine = _localClock.InZoneStrictly(_zoneGmt).ToInstant().Minus(Duration.FromHours(3));
+            var startFever = startQuarantine.Plus(Duration.FromHours(1));
+
+            var fred = new IsolateRecord("Fred", startQuarantine, true, startFever);
+            var calc = new CalcUk(fred);
+
+            Assert.Equal(Duration.FromHours((6 * 24) + 22), calc.GetIsolationRemaining(_clock.GetCurrentInstant())); //now 3 hours after startQuarantine and 2 hours after startFever
+        }
+
         [Fact]
         public void NowEarlierStartIsolationFailTest()
         {
-            var startQuarantine = new DateTime(2020, 1, 1, 17, 23, 0);
-            var now = new             DateTime(2020, 1, 1, 17, 22, 59);     //now is earlier than start
+            var startQuarantine = _localClock.InZoneStrictly(_zoneGmt).ToInstant().Plus(Duration.FromHours(3));
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false);
+            var fred = new IsolateRecord("Fred", startQuarantine, false);
             var calc = new CalcUk(fred);
 
-            Assert.Equal(Extensions.TimeSpanError, calc.GetTimeSpanInIsolation(now.ToUniversalTime()));
+            Assert.Equal(ExtNodatime.DurationError, calc.GetIsolationRemaining(_clock.GetCurrentInstant())); //now is earlier than start
         }
 
         [Fact]
         public void NowEarlierStartFeverFailTest()
         {
-            var startFever = new DateTime(2020, 1, 1, 17, 23, 0);
-            var now =        new DateTime(2020, 1, 1, 17, 22, 59);     //now is earlier than start
-            var startQuarantine = now;
-            
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false, startFever.ToUniversalTime());
+            var startQuarantine = _localClock.InZoneStrictly(_zoneGmt).ToInstant().Minus(Duration.FromHours(3));   //3 hours before _clock (now)
+            var startFever = _localClock.InZoneStrictly(_zoneGmt).ToInstant().Plus(Duration.FromHours(3));         //3 hours after _clock (now)
+
+            var fred = new IsolateRecord("Fred", startQuarantine, false, startFever);
             var calc = new CalcUk(fred);
 
-            Assert.Equal(Extensions.TimeSpanError, calc.GetTimeSpanInIsolation(now.ToUniversalTime()));
+            Assert.Equal(ExtNodatime.DurationError, calc.GetIsolationRemaining(_clock.GetCurrentInstant())); //now is earlier than startFever
         }
 
         [Fact]
         public void StartFeverEarlierStartIsolationFailTest()
         {
-            var now = new DateTime(2020, 1, 1, 17, 23, 0);     //now is earlier than start
-            var startQuarantine = now;
-            var startFever = new DateTime(2020, 1, 1, 17, 22, 59);
+            var startQuarantine = _localClock.InZoneStrictly(_zoneGmt).ToInstant().Minus(Duration.FromHours(3));   //3 hours before _clock (now)
+            var startFever = startQuarantine.Minus(Duration.FromHours(1));                                          //1 hour before startQuarantine
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false, startFever.ToUniversalTime());
+            var fred = new IsolateRecord("Fred", startQuarantine, false, startFever);
             var calc = new CalcUk(fred);
 
-            Assert.Equal(Extensions.TimeSpanError, calc.GetTimeSpanInIsolation(now.ToUniversalTime()));
-        }
-
-
-        [Fact]
-        public void SymptomsAtNegDayFailTest()
-        {
-            var startQuarantine = new DateTime(2020, 4, 1, 17, 30, 0);
-            var startFever = new DateTime(2020, 4, 2, 17, 30, 0);
-            var now = new DateTime(2020, 4, 2, 17, 29, 59);
-
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), true, startFever);
-            var calc = new CalcUk(fred);
-
-            Assert.Equal(Extensions.TimeSpanError, calc.GetTimeSpanInIsolation(now.ToUniversalTime()));
+            Assert.Equal(ExtNodatime.DurationError, calc.GetIsolationRemaining(_clock.GetCurrentInstant())); //startFever is earlier than startQuarantine
         }
 
         [Fact]
-        public void SymptomsNowTest()
+        public void SymptomsAtLessThan24HourTest()
         {
-            var startQuarantine = new DateTime(2020, 4, 1, 17, 30, 0);
-            var now =             new DateTime(2020, 4, 1, 17, 30, 1);
+            var startQuarantine = _localClock.InZoneStrictly(_zoneGmt).ToInstant().Minus(Duration.FromTimeSpan(new TimeSpan(0, 0, 0, 1)));
+            var startFever = startQuarantine;
+            var expected = Duration.FromTimeSpan(new TimeSpan(6, 23, 59, 59));
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), true);
+            var fred = new IsolateRecord("Fred", startQuarantine, true, startFever);
             var calc = new CalcUk(fred);
 
-            var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
+            Assert.Equal(expected, calc.GetIsolationRemaining(_clock.GetCurrentInstant()));
 
-            Assert.Equal(7, quarantine.Days);  //symptoms start at now (1/4/20 17:30:01)
-            Assert.Equal(0, quarantine.Hours);
-            Assert.Equal(0, quarantine.Minutes);
-            Assert.Equal(0, quarantine.Seconds);
-        }
-
-        [Fact]
-        public void SymptomsAtSameDayTest()
-        {
-            var startQuarantine = new DateTime(2020, 4, 1, 17, 30, 0);
-            var startFever = new DateTime(2020, 4, 1, 17, 30, 0);
-            var now = new DateTime(2020, 4, 1, 17, 30, 0);
-
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), true, startFever.ToUniversalTime());
-            var calc = new CalcUk(fred);
-
-            var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
-
-            Assert.Equal(7, quarantine.Days);
-            Assert.Equal(0, quarantine.Hours);
-            Assert.Equal(0, quarantine.Minutes);
-            Assert.Equal(0, quarantine.Seconds);
         }
 
         [Fact]
         public void SymptomsAtDay0Test()
         {
-            var startQuarantine = new DateTime(2020, 4, 1, 17, 30, 0);
-            var startFever = new DateTime(2020, 4, 1, 17, 30, 0);
-            var now = new DateTime(2020, 4, 1, 17, 30, 1);
+            var startQuarantine = _localClock.InZoneStrictly(_zoneGmt).ToInstant();
+            var startFever = startQuarantine;
+            var expected = Duration.FromTimeSpan(new TimeSpan(7, 0, 0, 0));
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), true, startFever.ToUniversalTime());
+            var fred = new IsolateRecord("Fred", startQuarantine, true, startFever);
             var calc = new CalcUk(fred);
 
-            var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
-
-            Assert.Equal(6, quarantine.Days);  //symptoms start at 1/4/20 17:30:00
-            Assert.Equal(23, quarantine.Hours);
-            Assert.Equal(59, quarantine.Minutes);
-            Assert.Equal(59, quarantine.Seconds);
+            Assert.Equal(expected, calc.GetIsolationRemaining(_clock.GetCurrentInstant()));
         }
 
         [Fact]
-        public void SymptomsAtDay1Test()
-        {
-            var startQuarantine = new DateTime(2020, 4, 1, 17, 30, 0);
-            var startFever = new DateTime(2020, 4, 2, 17, 30, 0);
-            var now = new DateTime(2020, 4, 2, 17, 30, 0);
+         public void SymptomsAtDay1Test()
+         {
+             var startQuarantine = _localClock.InZoneStrictly(_zoneGmt).ToInstant().Minus(Duration.FromDays(1));
+             var startFever = startQuarantine.Plus(Duration.FromDays(1));
+             var expected = Duration.FromTimeSpan(new TimeSpan(7, 0, 0, 0));
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), true, startFever.ToUniversalTime());
-            var calc = new CalcUk(fred);
+             var fred = new IsolateRecord("Fred", startQuarantine, true, startFever);
+             var calc = new CalcUk(fred);
 
-            var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
-
-            Assert.Equal(7, quarantine.Days);
-            Assert.Equal(0, quarantine.Hours);
-            Assert.Equal(0, quarantine.Minutes);
-            Assert.Equal(0, quarantine.Seconds);
+             Assert.Equal(expected, calc.GetIsolationRemaining(_clock.GetCurrentInstant()));
         }
 
         [Fact]
         public void SymptomsAtDay2Test()
         {
-            var startQuarantine = new DateTime(2020, 4, 1, 17, 30, 0);
-            var startFever = new DateTime(2020, 4, 3, 17, 30, 0);
-            var now = new DateTime(2020, 4, 3, 17, 30, 1);
+            var startQuarantine = _localClock.InZoneStrictly(_zoneGmt).ToInstant().Minus(Duration.FromDays(2));
+            var startFever = startQuarantine.Plus(Duration.FromDays(2));
+            var expected = Duration.FromTimeSpan(new TimeSpan(7, 0, 0, 0));
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), true, startFever.ToUniversalTime());
+            var fred = new IsolateRecord("Fred", startQuarantine, true, startFever);
             var calc = new CalcUk(fred);
 
-            var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
-
-            Assert.Equal(6, quarantine.Days);
-            Assert.Equal(23, quarantine.Hours);
-            Assert.Equal(59, quarantine.Minutes);
-            Assert.Equal(59, quarantine.Seconds);
+            Assert.Equal(expected, calc.GetIsolationRemaining(_clock.GetCurrentInstant()));
         }
 
         [Fact]
-        public void Symptoms13DaysAfterStartIsolationTest()
+        public void SymptomsAtDay13Test()
         {
-            var startQuarantine = new DateTime(2020, 1, 1, 17, 23, 0);
-            var startFever = new DateTime(2020, 1, 14, 17, 23, 0);
-            var now = new DateTime(2020, 1, 14, 17, 23, 0);
+            var startQuarantine = _localClock.InZoneStrictly(_zoneGmt).ToInstant().Minus(Duration.FromDays(13));
+            var startFever = startQuarantine.Plus(Duration.FromDays(13));
+            var expected = Duration.FromTimeSpan(new TimeSpan(7, 0, 0, 0));
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), true, startFever.ToUniversalTime());
+            var fred = new IsolateRecord("Fred", startQuarantine, true, startFever);
             var calc = new CalcUk(fred);
 
-            var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
-
-            Assert.Equal(7, quarantine.Days);
-            Assert.Equal(0, quarantine.Hours);
-            Assert.Equal(0, quarantine.Minutes);
-            Assert.Equal(0, quarantine.Seconds);
+            Assert.Equal(expected, calc.GetIsolationRemaining(_clock.GetCurrentInstant()));
         }
 
         [Fact]
-        public void Symptoms14DaysAfterStartIsolationTest()    //It could be argued that the self-isolation is complete so fever is irrelevant, but side with caution
+        public void SymptomsAtDay14Test() //It could be argued that the self-isolation is complete so fever is irrelevant, but side with caution
         {
-            var startQuarantine = new DateTime(2020, 1, 1, 17, 23, 0);
-            var startFever =      new DateTime(2020, 1, 15, 17, 23, 0);
-            var now =             new DateTime(2020, 1, 15, 17, 23, 0);
+            var startQuarantine = _localClock.InZoneStrictly(_zoneGmt).ToInstant().Minus(Duration.FromDays(14));
+            var startFever = startQuarantine.Plus(Duration.FromDays(14));
+            var expected = Duration.FromTimeSpan(new TimeSpan(7, 0, 0, 0));
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false, startFever.ToUniversalTime());
+            var fred = new IsolateRecord("Fred", startQuarantine, true, startFever);
             var calc = new CalcUk(fred);
 
-            var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
-
-            Assert.Equal(7, quarantine.Days);
-            Assert.Equal(0, quarantine.Hours);
-            Assert.Equal(0, quarantine.Minutes);
-            Assert.Equal(0, quarantine.Seconds);
-        }
-
-
-        [Fact]
-        public void NoSymptomsSameTimeTest()
-        {
-            var startQuarantine = new DateTime(2020, 1, 1, 17, 23, 0);
-            var now = new             DateTime(2020, 1, 1, 17, 23, 0);     //now is same as start
-
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false);
-            var calc = new CalcUk(fred);
-
-            var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
-
-            Assert.Equal(14, quarantine.Days);
-            Assert.Equal(0, quarantine.Hours);
-            Assert.Equal(0, quarantine.Minutes);
-            Assert.Equal(0, quarantine.Seconds);
+            Assert.Equal(expected, calc.GetIsolationRemaining(_clock.GetCurrentInstant()));
         }
 
         [Fact]
-        public void NoSymptomsNowTest()
+        public void NoSymptomsAtLessThan24HourTest()
         {
-            var startQuarantine = new DateTime(2020, 4, 1, 17, 30, 0);
-            var now =             new DateTime(2020, 4, 1, 17, 30, 1);
+            var startQuarantine = _localClock.InZoneStrictly(_zoneGmt).ToInstant().Minus(Duration.FromTimeSpan(new TimeSpan(0, 0, 0, 1)));
+            var expected = Duration.FromTimeSpan(new TimeSpan(13, 23, 59, 59));
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false);
+            var fred = new IsolateRecord("Fred", startQuarantine, false);
             var calc = new CalcUk(fred);
 
-            var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
+            Assert.Equal(expected, calc.GetIsolationRemaining(_clock.GetCurrentInstant()));
 
-            Assert.Equal(13, quarantine.Days);
-            Assert.Equal(23, quarantine.Hours);
-            Assert.Equal(59, quarantine.Minutes);
-            Assert.Equal(59, quarantine.Seconds);
         }
 
         [Fact]
-        public void NoSymptoms0DayHourTest()
+        public void NoSymptomsAtDay0Test()
         {
-            var startQuarantine = new DateTime(2020, 1, 1, 0, 0, 0);
-            var now = new             DateTime(2020, 1, 1, 23, 59, 59);     
+            var startQuarantine = _localClock.InZoneStrictly(_zoneGmt).ToInstant();
+            var expected = Duration.FromTimeSpan(new TimeSpan(14, 0, 0, 0));
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false);
-
+            var fred = new IsolateRecord("Fred", startQuarantine, false);
             var calc = new CalcUk(fred);
 
-            var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
-
-            Assert.Equal(13, quarantine.Days);
-            Assert.Equal(0, quarantine.Hours);
-            Assert.Equal(0, quarantine.Minutes);
-            Assert.Equal(1, quarantine.Seconds);
+            Assert.Equal(expected, calc.GetIsolationRemaining(_clock.GetCurrentInstant()));
         }
 
         [Fact]
-        public void NoSymptoms0DayLessThan24HourTest()
+        public void NoSymptomsAtDay1Test()
         {
-            var startQuarantine = new DateTime(2020, 1, 1, 17, 30, 0);
-            var now = new             DateTime(2020, 1, 2, 17, 29, 59);  
+            var startQuarantine = _localClock.InZoneStrictly(_zoneGmt).ToInstant().Minus(Duration.FromDays(1));
+            var expected = Duration.FromTimeSpan(new TimeSpan(13, 0, 0, 0));
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false);
+            var fred = new IsolateRecord("Fred", startQuarantine, false);
             var calc = new CalcUk(fred);
 
-            var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
-
-            Assert.Equal(13, quarantine.Days);
-            Assert.Equal(0, quarantine.Hours);
-            Assert.Equal(0, quarantine.Minutes);
-            Assert.Equal(1, quarantine.Seconds);
+            Assert.Equal(expected, calc.GetIsolationRemaining(_clock.GetCurrentInstant()));
         }
 
         [Fact]
-        public void NoSymptomsAfterDay0Test()
+        public void NoSymptomsAtDay13Test()
         {
-            var startQuarantine = new DateTime(2020, 4, 1, 17, 30, 0);
-            var startFever =      new DateTime(2020, 4, 1, 17, 30, 0);
-            var now =             new DateTime(2020, 4, 1, 17, 30, 1);
+            var startQuarantine = _localClock.InZoneStrictly(_zoneGmt).ToInstant().Minus(Duration.FromDays(13));
+            var expected = Duration.FromTimeSpan(new TimeSpan(1, 0, 0, 0));
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false, startFever.ToUniversalTime());
+            var fred = new IsolateRecord("Fred", startQuarantine, false);
             var calc = new CalcUk(fred);
 
-            var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
-
-            Assert.Equal(6, quarantine.Days);
-            Assert.Equal(23, quarantine.Hours);
-            Assert.Equal(59, quarantine.Minutes);
-            Assert.Equal(59, quarantine.Seconds);
+            Assert.Equal(expected, calc.GetIsolationRemaining(_clock.GetCurrentInstant()));
         }
 
         [Fact]
-        public void NoSymptomsAfterDay1Test()
+        public void NoSymptomsAtDay14Test()
         {
-            var startQuarantine = new DateTime(2020, 4, 1, 17, 30, 0);
-            var startFever =      new DateTime(2020, 4, 1, 17, 30, 0);
-            var now =             new DateTime(2020, 4, 2, 17, 30, 1);
+            var startQuarantine = _localClock.InZoneStrictly(_zoneGmt).ToInstant().Minus(Duration.FromDays(14));
+            var expected = Duration.FromTimeSpan(new TimeSpan(0, 0, 0, 0));
 
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false, startFever.ToUniversalTime());
+            var fred = new IsolateRecord("Fred", startQuarantine, false);
             var calc = new CalcUk(fred);
 
-            var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
-
-            Assert.Equal(5, quarantine.Days);
-            Assert.Equal(23, quarantine.Hours);
-            Assert.Equal(59, quarantine.Minutes);
-            Assert.Equal(59, quarantine.Seconds);
-
-            var mary = new C19QCalcLib.Record("Mary", startQuarantine.ToUniversalTime(), true, startFever.ToUniversalTime());
-            var calc2 = new CalcUk(mary);
-
-            quarantine = calc2.GetTimeSpanInIsolation(now.ToUniversalTime());
-
-            Assert.Equal(5, quarantine.Days);
-            Assert.Equal(23, quarantine.Hours);
-            Assert.Equal(59, quarantine.Minutes);
-            Assert.Equal(59, quarantine.Seconds);
-        }
-
-        [Fact]
-        public void NoSymptomsAfterDay5Test()
-        {
-            var startQuarantine = new DateTime(2020, 4, 1, 17, 30, 0);
-            var startFever =      new DateTime(2020, 4, 1, 17, 30, 0);
-            var now =             new DateTime(2020, 4, 6, 17, 30, 1);
-
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false, startFever.ToUniversalTime());
-            var calc = new CalcUk(fred);
-
-            var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
-
-            Assert.Equal(1, quarantine.Days);
-            Assert.Equal(23, quarantine.Hours);
-            Assert.Equal(59, quarantine.Minutes);
-            Assert.Equal(59, quarantine.Seconds);
-
-            var mary = new C19QCalcLib.Record("Mary", startQuarantine.ToUniversalTime(), true, startFever.ToUniversalTime());
-            var calc2 = new CalcUk(mary);
-
-            quarantine = calc2.GetTimeSpanInIsolation(now.ToUniversalTime());
-
-            Assert.Equal(1, quarantine.Days);
-            Assert.Equal(23, quarantine.Hours);
-            Assert.Equal(59, quarantine.Minutes);
-            Assert.Equal(59, quarantine.Seconds);
-        }
-
-        [Fact]
-        public void NoSymptomsAfterDay6Test()  //temperature normal on 6th day
-        {
-            var startQuarantine = new DateTime(2020, 4, 1, 17, 30, 0);
-            var startFever =      new DateTime(2020, 4, 1, 17, 30, 0);
-            var now =             new DateTime(2020, 4, 7, 17, 30, 0);
-
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false, startFever.ToUniversalTime());
-            var calc = new CalcUk(fred);
-
-            var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
-
-            Assert.Equal(1, quarantine.Days);
-            Assert.Equal(0, quarantine.Hours);
-            Assert.Equal(0, quarantine.Minutes);
-            Assert.Equal(0, quarantine.Seconds);
-
-            var mary = new C19QCalcLib.Record("Mary", startQuarantine.ToUniversalTime(), true, startFever.ToUniversalTime());
-            var calc2 = new CalcUk(mary);
-
-            quarantine = calc2.GetTimeSpanInIsolation(now.ToUniversalTime());
-
-            Assert.Equal(1, quarantine.Days);
-            Assert.Equal(0, quarantine.Hours);
-            Assert.Equal(0, quarantine.Minutes);
-            Assert.Equal(0, quarantine.Seconds);
-        }
-
-
-        [Fact]
-        public void NoSymptomsAfterDay7Test() //temperature normal on 7th day
-        {
-            var startQuarantine = new DateTime(2020, 4, 1, 17, 30, 0);
-            var startFever =      new DateTime(2020, 4, 1, 17, 30, 0);
-            var now =             new DateTime(2020, 4, 8, 17, 30, 0);
-
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false, startFever.ToUniversalTime());
-            var calc = new CalcUk(fred);
-
-            var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
-
-            Assert.Equal(0, quarantine.Days);
-            Assert.Equal(0, quarantine.Hours);
-            Assert.Equal(0, quarantine.Minutes);
-            Assert.Equal(0, quarantine.Seconds);
-
-            var mary = new C19QCalcLib.Record("Mary", startQuarantine.ToUniversalTime(), true, startFever.ToUniversalTime());
-            var calc2 = new CalcUk(mary);
-
-            quarantine = calc2.GetTimeSpanInIsolation(now.ToUniversalTime());
-
-            Assert.Equal(1, quarantine.Days);
-            Assert.Equal(0, quarantine.Hours);
-            Assert.Equal(0, quarantine.Minutes);
-            Assert.Equal(0, quarantine.Seconds);
-        }
-
-        [Fact]
-        public void NoSymptomsAfterDay8Test() //temperature normal on 8th day
-        {
-            var startQuarantine = new DateTime(2020, 4, 1, 17, 30, 0);
-            var startFever =      new DateTime(2020, 4, 1, 17, 30, 0);
-            var now =             new DateTime(2020, 4, 9, 17, 30, 0);
-
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false, startFever.ToUniversalTime());
-            var calc = new CalcUk(fred);
-
-            var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
-
-            Assert.Equal(0, quarantine.Days);
-            Assert.Equal(0, quarantine.Hours);
-            Assert.Equal(0, quarantine.Minutes);
-            Assert.Equal(0, quarantine.Seconds);
-
-            var mary = new C19QCalcLib.Record("Mary", startQuarantine.ToUniversalTime(), true, startFever.ToUniversalTime());
-            var calc2 = new CalcUk(mary);
-
-            quarantine = calc2.GetTimeSpanInIsolation(now.ToUniversalTime());
-
-            Assert.Equal(1, quarantine.Days);
-            Assert.Equal(0, quarantine.Hours);
-            Assert.Equal(0, quarantine.Minutes);
-            Assert.Equal(0, quarantine.Seconds);
-        }
-
-        [Fact]
-        public void NoSymptomsAfterDay9Test() //no symptoms on 9th day
-        {
-            var startQuarantine = new DateTime(2020, 4, 1, 17, 30, 0);
-            var startFever =      new DateTime(2020, 4, 1, 17, 30, 0);
-            var now =             new DateTime(2020, 4, 10, 17, 30, 1);
-
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine, false, startFever);
-            var calc = new CalcUk(fred);
-
-            var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
-
-            Assert.Equal(0, quarantine.Days);
-            Assert.Equal(0, quarantine.Hours);
-            Assert.Equal(0, quarantine.Minutes);
-            Assert.Equal(0, quarantine.Seconds);
-
-            var mary = new C19QCalcLib.Record("Mary", startQuarantine, true, startFever);
-            var calc2 = new CalcUk(mary);
-
-            quarantine = calc2.GetTimeSpanInIsolation(now.ToUniversalTime());
-
-            Assert.Equal(1, quarantine.Days);
-            Assert.Equal(0, quarantine.Hours);
-            Assert.Equal(0, quarantine.Minutes);
-            Assert.Equal(0, quarantine.Seconds);
-        }
-
-
-        [Fact]
-        public void NoSymptomsDay0Test()
-        {
-            var startQuarantine = new DateTime(2020, 1, 1, 17, 23, 0);
-            var now = new DateTime(2020, 1, 1, 17, 23, 1);
-
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false);
-            var calc = new CalcUk(fred);
-
-            var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
-
-            Assert.Equal(13, quarantine.Days);
-            Assert.Equal(23, quarantine.Hours);
-            Assert.Equal(59, quarantine.Minutes);
-            Assert.Equal(59, quarantine.Seconds);
-        }
-
-        [Fact]
-        public void NoSymptoms1DayTest()
-        {
-            var startQuarantine = new DateTime(2020, 1, 1, 17, 30, 0);
-            var now = new             DateTime(2020, 1, 2, 17, 30, 1);  
-
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false);
-            var calc = new CalcUk(fred);
-
-            var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
-
-            Assert.Equal(12, quarantine.Days);
-            Assert.Equal(23, quarantine.Hours);
-            Assert.Equal(59, quarantine.Minutes);
-            Assert.Equal(59, quarantine.Seconds);
-        }
-
-        [Fact]
-        public void NoSymptoms2DayTest()
-        {
-            var startQuarantine = new DateTime(2020, 1, 1, 17, 30, 0);
-            var now = new             DateTime(2020, 1, 3, 17, 30, 1);  
-
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false);
-            var calc = new CalcUk(fred);
-
-            var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
-
-            Assert.Equal(11, quarantine.Days);
-            Assert.Equal(23, quarantine.Hours);
-            Assert.Equal(59, quarantine.Minutes);
-            Assert.Equal(59, quarantine.Seconds);
-        }
-
-        [Fact]
-        public void NoSymptoms12DayTest()
-        {
-            var startQuarantine = new DateTime(2020, 4, 1, 17, 30, 0);
-            var now = new             DateTime(2020, 4, 13, 17, 30, 1);  
-
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false);
-            var calc = new CalcUk(fred);
-
-            var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
-
-            Assert.Equal(1, quarantine.Days);
-            Assert.Equal(23, quarantine.Hours);
-            Assert.Equal(59, quarantine.Minutes);
-            Assert.Equal(59, quarantine.Seconds);
-        }
-
-        [Fact]
-        public void NoSymptoms13DayTest()
-        {
-            var startQuarantine = new DateTime(2020, 1, 1, 17, 30, 0);
-            var now = new             DateTime(2020, 1, 14, 17, 30, 1);  
-
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false);
-            var calc = new CalcUk(fred);
-
-            var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
-
-            Assert.Equal(0, quarantine.Days);
-            Assert.Equal(23, quarantine.Hours);
-            Assert.Equal(59, quarantine.Minutes);
-            Assert.Equal(59, quarantine.Seconds);
-        }
-
-        [Fact]
-        public void NoSymptoms13DayDiffMonthTest()
-        {
-            var startQuarantine = new DateTime(2020, 3, 30, 17, 30, 0);
-            var now = new             DateTime(2020, 4, 12, 17, 30, 1);  
-
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false);
-            var calc = new CalcUk(fred);
-
-            var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
-
-            Assert.Equal(0, quarantine.Days);
-            Assert.Equal(23, quarantine.Hours);
-            Assert.Equal(59, quarantine.Minutes);
-            Assert.Equal(59, quarantine.Seconds);
-        }
-
-        [Fact]
-        public void NoSymptoms14DayTest()
-        {
-            var startQuarantine = new DateTime(2020, 1, 1, 17, 30, 0);
-            var now = new             DateTime(2020, 1, 15, 17, 30, 1);  
-
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false);
-            var calc = new CalcUk(fred);
-
-            var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
-
-            Assert.Equal(0, quarantine.Days);
-            Assert.Equal(0, quarantine.Hours);
-            Assert.Equal(0, quarantine.Minutes);
-            Assert.Equal(0, quarantine.Seconds);
-        }
-
-        [Fact]
-        public void NoSymptoms15DayTest()
-        {
-            var startQuarantine = new DateTime(2020, 4, 1, 17, 30, 0);
-            var now = new             DateTime(2020, 4, 16, 17, 30, 1); 
-
-            var fred = new C19QCalcLib.Record("Fred", startQuarantine.ToUniversalTime(), false);
-            var calc = new CalcUk(fred);
-
-            var quarantine = calc.GetTimeSpanInIsolation(now.ToUniversalTime());
-
-            Assert.Equal(0, quarantine.Days);
-            Assert.Equal(0, quarantine.Hours);
-            Assert.Equal(0, quarantine.Minutes);
-            Assert.Equal(0, quarantine.Seconds);
+            Assert.Equal(expected, calc.GetIsolationRemaining(_clock.GetCurrentInstant()));
         }
     }
 }

@@ -4,13 +4,13 @@ using Xunit;
 
 namespace C19QCalcLibTest
 {
-    public class ExtensionsTest
+    public class ExtBclDateTimeTest
     {
         private readonly DateTime _invalidDateTime;
 
-        public ExtensionsTest()
+        public ExtBclDateTimeTest()
         {
-            _invalidDateTime = Extensions.DateTimeError;
+            _invalidDateTime = ExtBclDateTime.DateTimeError;
         }
 
         // Test to demonstrate DateTimeOffset unexpected functionality
@@ -61,14 +61,14 @@ namespace C19QCalcLibTest
         [Fact]
         public void DateTimeOffsetIsErrorTrueTest()
         {
-            var tim = Extensions.DateTimeOffsetError;
+            var tim = ExtBclDateTime.DateTimeOffsetError;
             Assert.True(tim.IsError());
         }
 
         [Fact]
         public void DateTimeIsErrorTrueTest()
         {
-            var tim = Extensions.DateTimeError;
+            var tim = ExtBclDateTime.DateTimeError;
             Assert.True(tim.IsError());
         }
 
@@ -89,7 +89,7 @@ namespace C19QCalcLibTest
         [Fact]
         public void TimeSpanIsErrorTrueTest()
         {
-            var span = Extensions.TimeSpanError;
+            var span = ExtBclDateTime.TimeSpanError;
             Assert.True(span.IsError());
         }
 
