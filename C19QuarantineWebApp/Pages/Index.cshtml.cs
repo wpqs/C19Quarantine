@@ -42,7 +42,7 @@ namespace C19QuarantineWebApp.Pages
 
         public void OnGet()
         {
-            InitialiseSettings();
+            InitialiseSettingsFromCookies();
 
             TextColor = "black";
             Result = $"To calculate the number of days that you must remain in self-isolation provide the above information and then click the calculate button.";
@@ -61,13 +61,14 @@ namespace C19QuarantineWebApp.Pages
         {
             IActionResult rc = Page();
 
-            InitialiseSettings();
+            TextColor = "red";
+            ShowRange = true;
+            InitialiseSettingsFromCookies();
 
             var form = ProcessForm(SelectedTzDbName ?? AppTimeZones.DefaultTzDbName, SelectedCultureTab ?? AppCultures.DefaultTab);   //get time and culture from dropdowns on form
 
             if (ModelState.IsValid && (form != null))
             {
-                TextColor = "red";
                 try
                 {
                     var nowInstance = _clock.GetCurrentInstant();
@@ -75,27 +76,17 @@ namespace C19QuarantineWebApp.Pages
                     var calc = new CalcUk(record);
 
                     IsolationDaysMax = calc.GetIsolationPeriodMax();
-
                     if (calc.IsSymptomatic() && (form.StartSymptoms == null))
                         StartSymptoms = nowInstance.ToString(SelectedCultureTab, DateTimeZoneProviders.Tzdb[SelectedTzDbName], WithoutDaylightSavings); 
-                    else
-                        StartSymptoms = StartSymptoms;
 
-                    ShowRange = true;
-                    var span = calc.GetIsolationRemaining(nowInstance);
-                    if (span.IsError())
+                    var isolationDaysRemaining = calc.GetIsolationDaysRemaining(nowInstance, out var colour, out var comment);
+                    if (isolationDaysRemaining == -1)
                         ModelState.TryAddModelError(nameof(ProgramError), $"{MxFormProc.ProgramErrorMsg} 101: An internal error has been detected. Please report this problem");
-                    else if (span.TotalMinutes > 0)
-                    {
-                        TextColor = "orange";
-                        Result = $"The time remaining for your self-isolation is {span.ToStringRemainingTime()}"; 
-                        IsolationDaysRemaining = ((int) span.TotalDays) + 1;
-                    }
                     else
                     {
-                        TextColor = "green";
-                        Result = $"Your self-isolation is now COMPLETE unless you have been advised otherwise";
-                        IsolationDaysRemaining = 0;
+                        TextColor = colour;
+                        Result = comment;
+                        IsolationDaysRemaining = isolationDaysRemaining;
                     }
                 }
                 catch (Exception e)
@@ -137,7 +128,7 @@ namespace C19QuarantineWebApp.Pages
             return rc;
         }
 
-        private void InitialiseSettings()
+        private void InitialiseSettingsFromCookies()
         {
             SelectedCultureTab = AppCultures.DefaultTab;
             if (Request.Cookies[AppCultures.CookieName] != null)

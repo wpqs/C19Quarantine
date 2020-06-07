@@ -25,40 +25,36 @@ Smoke Test - C19Quarantine
 			no errors
 			---------
 
-			Start				Symptoms			Still 	Symptoms (on result)	Slider	Result
+	Ref#		Start				Symptoms			Still 		Symptoms (on result)	Slider	Result
 			                                        have symptoms
 
-			04-05-2020 2:43 PM	[empty]				no									100%	The time remaining for your self-isolation is 14 days
-			21-04-2020 2:43 PM	[empty]				no									7%		The time remaining for your self-isolation is 1 day
-			20-04-2020 2:50 PM	[empty]				no									7%		The time remaining for your self-isolation is less than an hour
-			20-04-2020 2:43 PM	[empty]				no									0%		Your self-isolation is now COMPLETE unless you have been advised otherwise
-
-			20-04-2020 2:50 PM	[empty]				yes			04-05-2020 2:43 PM		50%		The time remaining for your self-isolation is 7 days
-
-			04-05-2020 2:43 PM	[empty]				yes			04-05-2020 2:43 PM		50%		The time remaining for your self-isolation is 7 days
-			28-04-2020 2:43 PM	04-05-2020 2:43 PM	yes			04-05-2020 2:43 PM		50%		The time remaining for your self-isolation is 7 days
-			28-04-2020 2:43 PM	28-04-2020 2:43 PM	no			28-04-2020 2:43 PM		7%		The time remaining for your self-isolation is 1 day
-	    	27-04-2020 2:53 PM	27-04-2020 2:53 PM	yes			27-04-2020 2:53 PM		7%		The time remaining for your self-isolation is 1 day
-			27-04-2020 2:43 PM 	27-04-2020 2:43 PM	no			27-04-2020 2:43 PM		0%		Your self-isolation is now COMPLETE unless you have been advised otherwise
-
-	    	26-04-2020 2:43 PM	26-04-2020 2:43 PM	yes			26-04-2020 2:43 PM		7%		The time remaining for your self-isolation is 1 day
-	    	25-04-2020 2:43 PM	26-04-2020 2:43 PM	yes			26-04-2020 2:43 PM		7%		The time remaining for your self-isolation is 1 day
-	    	24-04-2020 2:43 PM	26-04-2020 2:43 PM	yes			26-04-2020 2:43 PM		7%		The time remaining for your self-isolation is 1 day
-			21-04-2020 2:43 PM	21-04-2020 2:43 PM	yes			21-04-2020 2:43 PM		7%		The time remaining for your self-isolation is 1 day
+	1		04-05-2020 2:43 PM	[empty]				no									100%	The time remaining for your self-isolation is 14 days
+	2		21-04-2020 2:43 PM	[empty]				no									7%		The time remaining for your self-isolation is 1 day
+	3		20-04-2020 2:50 PM	[empty]				no									0%		The time remaining for your self-isolation is less than an hour
+	4		20-04-2020 2:43 PM	[empty]				no									0%		Your self-isolation is now COMPLETE unless you have been advised otherwise
+	5		20-04-2020 2:50 PM	[empty]				yes			04-05-2020 2:43 PM		50%		The time remaining for your self-isolation is 7 days
+	6		04-05-2020 2:43 PM	[empty]				yes			04-05-2020 2:43 PM		50%		The time remaining for your self-isolation is 7 days
+	7		28-04-2020 2:43 PM	04-05-2020 2:43 PM	yes			04-05-2020 2:43 PM		50%		The time remaining for your self-isolation is 7 days
+	8		28-04-2020 2:43 PM	28-04-2020 2:43 PM	no			28-04-2020 2:43 PM		7%		The time remaining for your self-isolation is 1 day
+	9   	27-04-2020 2:53 PM	27-04-2020 2:53 PM	yes			27-04-2020 2:53 PM		7%		The time remaining for your self-isolation is 1 day
+	10		27-04-2020 2:43 PM 	27-04-2020 2:43 PM	no			27-04-2020 2:43 PM		0%		Your self-isolation is now COMPLETE unless you have been advised otherwise
+	11    	26-04-2020 2:43 PM	26-04-2020 2:43 PM	yes			26-04-2020 2:43 PM		7%		The time remaining for your self-isolation is 1 day
+	12    	25-04-2020 2:43 PM	26-04-2020 2:43 PM	yes			26-04-2020 2:43 PM		7%		The time remaining for your self-isolation is 1 day
+	13    	24-04-2020 2:43 PM	26-04-2020 2:43 PM	yes			26-04-2020 2:43 PM		7%		The time remaining for your self-isolation is 1 day
+	14		21-04-2020 2:43 PM	21-04-2020 2:43 PM	yes			21-04-2020 2:43 PM		7%		The time remaining for your self-isolation is 1 day
 
 			error reporting
 			---------------
-			Start				Symptoms			Still		Symptoms (on result)	Slider	Result	Errors
+	Ref#	Start				Symptoms			Still		Symptoms (on result)	Slider	Result	Errors
 			                                        have symptoms
 
-			04-05-20   2:43 PM	[empty]				no			[empty]					hidden	hidden	Start: Please try again with a valid date/time like 14-04-2020 10:45 AM
-			04-05-2020 2:43 XM	[empty]				no			[empty]					hidden	hidden	Start: Please try again with a valid date/time like 14-04-2020 10:45 AM
-			04-05-2020 2:43 XM	04-05-2020 2:43 PM	no			04-05-2020 2:43 PM		hidden	hidden	Start: Please try again with a valid date/time like 14-04-2020 10:45 AM
-
-			04-05-2020 2:50 PM	[empty]				no			[empty]					hidden	hidden	Start: This value is after the current time. Please try again with a value before 04-05-2020 2:43 PM
-			04-05-2020 2:43 PM	04-05-2020 2:50 PM	no			[empty]					hidden	hidden	Symptoms: This value is after the current time. Please try again with a value before 04-05-2020 2:43 PM
-			04-05-2020 2:43 PM	04-05-2020 2:41 PM	no			[empty]					hidden	hidden	Symptoms: This value is before the start of your self-isolation. If your symptoms started before you entered self-isolation then enter 04-05-2020 6:12 PM as the start of your symptoms and try again
-
-			04-05-2020 2:50 PM	04-05-2020 2:50 PM	gg			04-05-2020 2:50 PM		hidden	hidden	Start: This value is after the current time. Please try again with value before 04-05-2020 2:43 PM
+	15		04-05-20   2:43 PM	[empty]				no			[empty]					hidden	hidden	Start: Please try again with a valid date/time like 14-04-2020 10:45 AM
+	16		04-05-2020 2:43 XM	[empty]				no			[empty]					hidden	hidden	Start: Please try again with a valid date/time like 14-04-2020 10:45 AM
+	17		04-05-2020 2:43 PM	04-05-2020 2:43 XM	no			[empty]					hidden	hidden	Symptoms: Please try again with a valid date/time like 14-04-2020 10:45 AM
+	18		04-05-2020 2:50 PM	[empty]				no			[empty]					hidden	hidden	Start: This value is after the current time. Please try again with a value before 04-05-2020 2:43 PM
+	19		04-05-2020 2:43 PM	04-05-2020 2:50 PM	no			[empty]					hidden	hidden	Symptoms: This value is after the current time. Please try again with a value before 04-05-2020 2:43 PM
+	20		04-05-2020 2:43 PM	04-05-2020 2:41 PM	no			[empty]					hidden	hidden	Symptoms: This value is before the start of your self-isolation. If your symptoms started before you entered self-isolation then enter 04-05-2020 2:43 PM
+	21		04-05-2020 2:50 PM	04-05-2020 2:43 PM	gg			[empty]					hidden	hidden	HasSymptoms: Please enter either 'yes' or 'no'
+																										Start: This value is after the current time. Please try again with value before 04-05-2020 2:43 PM
 																										Symptoms: You must set the start of your self-isolation before giving the start of your symptoms
-																										Still have symptoms: Please enter either 'yes' or 'no'
+																										

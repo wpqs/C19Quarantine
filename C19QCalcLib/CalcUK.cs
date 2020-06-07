@@ -20,6 +20,32 @@ namespace C19QCalcLib
 
         public int GetIsolationPeriodMax() { return QuarantinePeriodNoSymptoms; }
 
+        public int GetIsolationDaysRemaining(Instant nowInstance, out string resultColor, out string comment)
+        {
+            int rc = -1;
+
+            comment = "[error]";
+            resultColor = "red";
+
+            var span = GetIsolationRemaining(nowInstance);
+            if (span.IsError() == false)
+            {
+                if (span.TotalMinutes > 0)
+                {
+                    comment = $"The time remaining for your self-isolation is {span.ToStringRemainingTime()}";
+                    resultColor = "orange";
+                    rc = ((int) span.TotalDays) + ((span.Hours > 12) ? 1 : 0);
+                }
+                else
+                {
+                    comment = $"Your self-isolation is now COMPLETE unless you have been advised otherwise";
+                    resultColor = "green";
+                    rc = 0;
+                }
+            }
+            return rc;
+        }
+
         public Duration GetIsolationRemaining(Instant nowInstance)
         {
             var rc = ExtNodatime.DurationError; //error

@@ -127,7 +127,7 @@ namespace C19QCalcLib
                         {
                             var span = NowInstance - isolation;
                             if (span.TotalSeconds < 0)
-                                rc = $"This value is after the current time. Please try again with value before {NowInstance.ToString(CultureTag, zone)}";
+                                rc = $"This value is after the current time. Please try again with a value before {NowInstance.ToString(CultureTag, zone)}";
                             else
                             {
                                 StartIsolation = isolation;  //no errors
@@ -166,7 +166,7 @@ namespace C19QCalcLib
                         {
                             var span = NowInstance - symptoms;
                             if (span.TotalSeconds < 0)
-                                rc = "This value is after the current time";
+                                rc = $"This value is after the current time. Please try again with a value before {NowInstance.ToString(CultureTag, zone)}";
                             else
                             {
                                 if (StartIsolation.IsError())
@@ -175,7 +175,7 @@ namespace C19QCalcLib
                                 {
                                     span = symptoms - StartIsolation;
                                     if (span.TotalSeconds < 0)
-                                        rc = $"This value is before the start of your self-isolation. If your symptoms started before you entered self-isolation then enter {StartIsolation.ToString(CultureTag, zone)} as the start of your symptoms and try again";
+                                        rc = $"This value is before the start of your self-isolation. If your symptoms started before you entered self-isolation then enter {StartIsolation.ToString(CultureTag, zone)}";
                                     else
                                     {
                                         StartSymptoms = symptoms;
