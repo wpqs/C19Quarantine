@@ -1,10 +1,13 @@
 using System;
+using C19QCalcLib;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using AppRequestCultureProvider = C19QuarantineWebApp.Pages.AppRequestCultureProvider;
 
 namespace C19QuarantineWebApp
 {
@@ -22,6 +25,17 @@ namespace C19QuarantineWebApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<RequestLocalizationOptions>(options =>
+            {
+                var cultures = new AppSupportedCultures();
+                options.DefaultRequestCulture = new RequestCulture(culture: cultures.GetDefaultCultureTab(), uiCulture: cultures.GetDefaultUiCultureTab());
+                options.SupportedCultures = cultures.GetSupportedCulturesInfo();
+                options.SupportedUICultures = cultures.GetSupportedCulturesInfo();
+                //options.FallBackToParentCultures = true;    //default to true - if en-US isn't in list of SupportedCultures then fall-back to en
+                //options.FallBackToParentUICultures = true;  //default to true - if en-US isn't in list of SupportedUICultures then fall-back to en
+                options.AddInitialRequestCultureProvider(new AppRequestCultureProvider(options));
+            });
+            services.AddHttpContextAccessor();
             services.AddRazorPages();
 
             if (Env.IsDevelopment() == false)
@@ -55,6 +69,8 @@ namespace C19QuarantineWebApp
                 app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
+
+            app.UseRequestLocalization();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

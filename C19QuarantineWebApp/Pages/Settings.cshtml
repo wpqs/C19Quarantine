@@ -18,9 +18,9 @@
                 <input asp-for="WithoutDaylightSaving" >&nbsp;&nbsp;&nbsp;Do not adjust for daylight savings
             </div>
             <div class="form-group">
-                <label asp-for="SelectedCulture" class="col-form-label">Set your Language and Region</label>
-                <select class="form-control" asp-for="SelectedCulture" asp-items="Model.SupportedAppCultures.Items"></select>
-                <span asp-validation-for="SelectedCulture" class="text-danger"></span>
+                <label asp-for="SelectedCultureTab" class="col-form-label">Set your Language and Region</label>
+                <select class="form-control" asp-for="SelectedCultureTab" asp-items="Model.SupportedAppCultures.Items"></select>
+                <span asp-validation-for="SelectedCultureTab" class="text-danger"></span>
             </div>            
             <div class="form-group">
                 <input id="SubmitButton" type="submit" value="Set" class="btn btn-primary"/>

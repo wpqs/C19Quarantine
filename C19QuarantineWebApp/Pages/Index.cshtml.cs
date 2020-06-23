@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using C19QCalcLib;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NodaTime;
 
@@ -10,6 +11,7 @@ namespace C19QuarantineWebApp.Pages
 {
     public class IndexModel : PageModel
     {
+        private readonly IHttpContextAccessor _httpContextAccessor;
         public bool ShowRange { get; private set; }
         public int IsolationDaysMax { get; private set; }
         public int IsolationDaysRemaining { get; private set; }
@@ -35,8 +37,9 @@ namespace C19QuarantineWebApp.Pages
 
 
 
-        public IndexModel()
+        public IndexModel(IHttpContextAccessor httpContextAccessor)
         {
+            _httpContextAccessor = httpContextAccessor;
             _clock = SystemClock.Instance;
         }
 
@@ -65,7 +68,7 @@ namespace C19QuarantineWebApp.Pages
             ShowRange = true;
             InitialiseSettingsFromCookies();
 
-            var form = ProcessForm(SelectedTzDbName ?? AppTimeZones.DefaultTzDbName, SelectedCultureTab ?? AppCultures.DefaultTab);   //get time and culture from dropdowns on form
+            var form = ProcessForm(SelectedTzDbName ?? AppSupportedTimeZones.DefaultTzDbName, SelectedCultureTab ?? AppSupportedCultures.DefaultTab);   //get time and culture from dropdowns on form
 
             if (ModelState.IsValid && (form != null))
             {
@@ -130,19 +133,14 @@ namespace C19QuarantineWebApp.Pages
 
         private void InitialiseSettingsFromCookies()
         {
-            SelectedCultureTab = AppCultures.DefaultTab;
-            if (Request.Cookies[AppCultures.CookieName] != null)
-                SelectedCultureTab = Request.Cookies[AppCultures.CookieName];
+            var supportedCultures = new AppSupportedCultures();
+            SelectedCultureTab = supportedCultures.GetCultureTabFromCookie(_httpContextAccessor); 
 
-            SelectedTimeZone = AppTimeZones.DefaultAcronym;
-            if (Request.Cookies[AppTimeZones.CookieTzName] != null)
-                SelectedTimeZone = Request.Cookies[AppTimeZones.CookieTzName];
+            var supportedTimeZones = new AppSupportedTimeZones();
+            SelectedTimeZone = supportedTimeZones.GetTimeZoneAcronymFromCookie(_httpContextAccessor);
+            WithoutDaylightSavings = supportedTimeZones.IsDaylightSavingAuto(_httpContextAccessor);
 
-            WithoutDaylightSavings = false; //apply daylight savings during summer time - default
-            if (Request.Cookies[AppTimeZones.CookieWithoutDaylightSaving] != null)
-                WithoutDaylightSavings = (AppTimeZones.CookieWithoutDaylightSavingValueYes == Request.Cookies[AppTimeZones.CookieWithoutDaylightSaving]);
-
-            SelectedTzDbName = AppTimeZones.GetTzDbName(SelectedTimeZone);
+            SelectedTzDbName = AppSupportedTimeZones.GetTzDbName(SelectedTimeZone);
         }
     }
 }

@@ -44,7 +44,7 @@ namespace C19QCalcLibTest
         private IndexFormProc GetForm(string cultureTag, string timeZoneAcronym, bool withoutDaylightSavings, string stillHasSymptoms, string startIsolation, string startSymptoms, out Dictionary<string, string>errors)
         {
             errors = null;
-            var form = new IndexFormProc(_clock, AppTimeZones.GetTzDbName(timeZoneAcronym), cultureTag, withoutDaylightSavings);
+            var form = new IndexFormProc(_clock, AppSupportedTimeZones.GetTzDbName(timeZoneAcronym), cultureTag, withoutDaylightSavings);
             var paramList = new List<KeyValuePair<string, object>>()
             {
                 new KeyValuePair<string, object>(MxFormProc.ProgramErrorKey, ""),
@@ -463,6 +463,7 @@ namespace C19QCalcLibTest
             var stillHasSymptoms = "no";
 
             var form = GetForm(cultureTagDefault, timeZoneAcronymDefault, false, stillHasSymptoms, startIsolation, null, out var errors);
+            Assert.NotNull(form);
             Assert.NotNull(errors);
             Assert.Single(errors);
             Assert.Equal("StartIsolation", errors.Keys.ToArray()[0]);
@@ -476,6 +477,7 @@ namespace C19QCalcLibTest
             var stillHasSymptoms = "no";
 
             var form = GetForm(cultureTagDefault, timeZoneAcronymDefault, false, stillHasSymptoms, startIsolation, null, out var errors);
+            Assert.NotNull(form);
             Assert.NotNull(errors);
             Assert.Single(errors);
             Assert.Equal("StartIsolation", errors.Keys.ToArray()[0]);
@@ -491,6 +493,7 @@ namespace C19QCalcLibTest
             var stillHasSymptoms = "no";
 
             var form = GetForm(cultureTagDefault, timeZoneAcronymDefault, false, stillHasSymptoms, startIsolation, startSymptoms, out var errors);
+            Assert.NotNull(form);
             Assert.NotNull(errors);
             Assert.Single(errors);
             Assert.Equal("StartSymptoms", errors.Keys.ToArray()[0]);
@@ -504,6 +507,7 @@ namespace C19QCalcLibTest
             var stillHasSymptoms = "no";
 
             var form = GetForm(cultureTagDefault, timeZoneAcronymDefault, false, stillHasSymptoms, startIsolation, null, out var errors);
+            Assert.NotNull(form);
             Assert.NotNull(errors);
             Assert.Single(errors);
             Assert.Equal("StartIsolation", errors.Keys.ToArray()[0]);
@@ -519,6 +523,7 @@ namespace C19QCalcLibTest
             var stillHasSymptoms = "no";
 
             var form = GetForm(cultureTagDefault, timeZoneAcronymDefault, false, stillHasSymptoms, startIsolation, startSymptoms, out var errors);
+            Assert.NotNull(form);
             Assert.NotNull(errors);
             Assert.Single(errors);
             Assert.Equal("StartSymptoms", errors.Keys.ToArray()[0]);
@@ -534,6 +539,7 @@ namespace C19QCalcLibTest
             var stillHasSymptoms = "no";
 
             var form = GetForm(cultureTagDefault, timeZoneAcronymDefault, false, stillHasSymptoms, startIsolation, startSymptoms, out var errors);
+            Assert.NotNull(form);
             Assert.NotNull(errors);
             Assert.Single(errors);
             Assert.Equal("StartSymptoms", errors.Keys.ToArray()[0]);
@@ -549,6 +555,7 @@ namespace C19QCalcLibTest
             var stillHasSymptoms = "gg";
 
             var form = GetForm(cultureTagDefault, timeZoneAcronymDefault, false, stillHasSymptoms, startIsolation, startSymptoms, out var errors);
+            Assert.NotNull(form);
             Assert.NotNull(errors);
             Assert.Equal(3, errors.Count);
             Assert.Equal("HasSymptoms", errors.Keys.ToArray()[0]);

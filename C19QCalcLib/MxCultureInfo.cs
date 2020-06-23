@@ -24,14 +24,14 @@ namespace C19QCalcLib
         public static MxCultureInfo Instance { get { return _instance; } }
 
         private Object _lock = new Object();
-        public CultureInfo GetCultureInfo(string cultureName = null)
+        public CultureInfo GetCultureInfo(string cultureTab = null)
         {
             CultureInfo rc = null;
             try
             {
                lock (_lock)
                {
-                   var name = cultureName ?? Thread.CurrentThread.CurrentCulture.Name;
+                   var name = cultureTab ?? Thread.CurrentThread.CurrentCulture.Name;
                    if (_cultures.TryGetValue(name, out var result))
                        rc = result;
                    else

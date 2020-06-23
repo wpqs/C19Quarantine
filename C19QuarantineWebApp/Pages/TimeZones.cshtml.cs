@@ -8,7 +8,7 @@ namespace C19QuarantineWebApp.Pages
         public string Result { get; private set; }
         public void OnGet()
         {
-            Result = AppTimeZones.GetReport("<p>", "</p>", "&nbsp;&nbsp;&nbsp;", "<hr/>");
+            Result = MxSupportedTimeZones.GetReport("<p>", "</p>", "&nbsp;&nbsp;&nbsp;", "<hr/>");
         }
     }
 }
