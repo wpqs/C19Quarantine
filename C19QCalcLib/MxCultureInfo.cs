@@ -36,15 +36,18 @@ namespace C19QCalcLib
                        rc = result;
                    else
                    {
-                       var cultureInfo = CultureInfo.GetCultureInfo(name);
-                       if (name == "en-GB")
+                       CultureInfo cultureInfo;
+                       if (name.Equals("en-GB", StringComparison.InvariantCultureIgnoreCase))
                        {
                            cultureInfo = CultureInfo.CreateSpecificCulture(name);
                            cultureInfo.DateTimeFormat.LongDatePattern = "dddd, d MMMM yyyy";
                            cultureInfo.DateTimeFormat.ShortDatePattern = "dd-MM-yyyy"; //format specifier "G" uses ShortDatePattern to render it's date component so use yyyy to keep consistency with other cultures
                            cultureInfo.DateTimeFormat.ShortTimePattern = "h:mm tt";
                        }
-
+                       else
+                       {
+                           cultureInfo = CultureInfo.GetCultureInfo(name);
+                       }
                        _cultures.Add(name, cultureInfo);
                        rc = cultureInfo;
                    }

@@ -11,7 +11,7 @@ namespace C19QuarantineWebApp.Pages
 {
     public class IndexModel : PageModel
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly MxCookies _cookies;
         public bool ShowRange { get; private set; }
         public int IsolationDaysMax { get; private set; }
         public int IsolationDaysRemaining { get; private set; }
@@ -39,7 +39,7 @@ namespace C19QuarantineWebApp.Pages
 
         public IndexModel(IHttpContextAccessor httpContextAccessor)
         {
-            _httpContextAccessor = httpContextAccessor;
+            _cookies = new MxCookies(httpContextAccessor);
             _clock = SystemClock.Instance;
         }
 
@@ -134,13 +134,13 @@ namespace C19QuarantineWebApp.Pages
         private void InitialiseSettingsFromCookies()
         {
             var supportedCultures = new AppSupportedCultures();
-            SelectedCultureTab = supportedCultures.GetCultureTabFromCookie(_httpContextAccessor); 
+            SelectedCultureTab = supportedCultures.GetCultureTab(_cookies.GetValue(MxSupportedCultures.CookieName)); 
 
             var supportedTimeZones = new AppSupportedTimeZones();
-            SelectedTimeZone = supportedTimeZones.GetTimeZoneAcronymFromCookie(_httpContextAccessor);
-            WithoutDaylightSavings = supportedTimeZones.IsDaylightSavingAuto(_httpContextAccessor);
+            SelectedTimeZone = supportedTimeZones.GetTimeZoneAcronym(_cookies.GetValue(MxSupportedTimeZones.CookieName));
+            WithoutDaylightSavings = supportedTimeZones.IsDaylightSavingAuto(_cookies.GetValue(MxSupportedTimeZones.CookieName));
 
-            SelectedTzDbName = AppSupportedTimeZones.GetTzDbName(SelectedTimeZone);
+            SelectedTzDbName = supportedTimeZones.GetTzDbName(SelectedTimeZone);
         }
     }
 }

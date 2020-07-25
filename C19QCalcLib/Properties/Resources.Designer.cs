@@ -77,5 +77,32 @@ namespace C19QCalcLib.Properties {
                 return ResourceManager.GetString("Welcome", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Welcome - en - {0}.
+        /// </summary>
+        public static string WelcomeP1 {
+            get {
+                return ResourceManager.GetString("WelcomeP1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Welcome - en - {0}, {1}.
+        /// </summary>
+        public static string WelcomeP2 {
+            get {
+                return ResourceManager.GetString("WelcomeP2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Welcome - en - {0}, {1} - {2,0:N2}.
+        /// </summary>
+        public static string WelcomeP3 {
+            get {
+                return ResourceManager.GetString("WelcomeP3", resourceCulture);
+            }
+        }
     }
 }

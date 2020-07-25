@@ -44,7 +44,8 @@ namespace C19QCalcLibTest
         private IndexFormProc GetForm(string cultureTag, string timeZoneAcronym, bool withoutDaylightSavings, string stillHasSymptoms, string startIsolation, string startSymptoms, out Dictionary<string, string>errors)
         {
             errors = null;
-            var form = new IndexFormProc(_clock, AppSupportedTimeZones.GetTzDbName(timeZoneAcronym), cultureTag, withoutDaylightSavings);
+            var supportedTimeZones = new AppSupportedTimeZones();
+            var form = new IndexFormProc(_clock, supportedTimeZones.GetTzDbName(timeZoneAcronym), cultureTag, withoutDaylightSavings);
             var paramList = new List<KeyValuePair<string, object>>()
             {
                 new KeyValuePair<string, object>(MxFormProc.ProgramErrorKey, ""),

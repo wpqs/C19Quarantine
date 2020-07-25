@@ -26,15 +26,15 @@ namespace C19QCalcLib
             return zone.GetZoneInterval(instant).Savings != Offset.Zero;
         }
 
-        public static string ToString(this Instant instant, string cultureName, DateTimeZone zone, bool withoutDaylightSaving = false, MxCultureInfo.FormatType formatType = MxCultureInfo.FormatType.DateTime, bool longFormat = false)
+        public static string ToString(this Instant instant, string cultureTab, DateTimeZone zone, bool withoutDaylightSaving = false, MxCultureInfo.FormatType formatType = MxCultureInfo.FormatType.DateTime, bool longFormat = false)
         {
             var rc = "[error]";
 
-            if ((zone != null) && (String.IsNullOrEmpty(cultureName) == false))
+            if ((zone != null) && (String.IsNullOrEmpty(cultureTab) == false))
             {
                 try
                 {
-                    var culture = MxCultureInfo.Instance.GetCultureInfo(cultureName);
+                    var culture = MxCultureInfo.Instance.GetCultureInfo(cultureTab);
                     if (culture != null)
                     {
                         var local = instant.InZone(zone).LocalDateTime;
@@ -76,19 +76,19 @@ namespace C19QCalcLib
             return rc;
         }
 
-        public static bool ParseDateTime(this string text, DateTimeZone zone, bool withoutDaylightSaving, string cultureName, MxCultureInfo.FormatType formatType, bool longFormat, out Instant result)
+        public static bool ParseDateTime(this string text, DateTimeZone zone, string cultureTab, bool withoutDaylightSaving, MxCultureInfo.FormatType formatType, bool longFormat, out Instant result)
         {
             var rc = false;
             result = InstantError;
 
-            if ((zone != null) && (String.IsNullOrEmpty(cultureName) == false) && (formatType != MxCultureInfo.FormatType.Date) && (formatType != MxCultureInfo.FormatType.Time))
+            if ((zone != null) && (String.IsNullOrEmpty(cultureTab) == false) && (formatType != MxCultureInfo.FormatType.Date) && (formatType != MxCultureInfo.FormatType.Time))
             {
                 try
                 {
-                    var culture = MxCultureInfo.Instance.GetCultureInfo(cultureName);
+                    var culture = MxCultureInfo.Instance.GetCultureInfo(cultureTab);
                     if (culture != null)
                     {
-                        var parseResult = LocalDateTimePattern.Create(MxCultureInfo.GetFormatSpecifier(formatType, longFormat), MxCultureInfo.Instance.GetCultureInfo(cultureName)).Parse(text);
+                        var parseResult = LocalDateTimePattern.Create(MxCultureInfo.GetFormatSpecifier(formatType, longFormat), MxCultureInfo.Instance.GetCultureInfo(cultureTab)).Parse(text);
                         //var temp = parseResult.Value;
                         if (parseResult.Success)
                         {
@@ -110,19 +110,19 @@ namespace C19QCalcLib
             return rc;
         }
 
-        public static bool ParseTime(this string text, DateTimeZone zone, bool withoutDaylightSaving, string cultureName, Instant givenDate, bool longFormat, out Instant result)
+        public static bool ParseTime(this string text, DateTimeZone zone, string cultureTab, bool withoutDaylightSaving, Instant givenDate, bool longFormat, out Instant result)
         {
             var rc = false;
             result = InstantError;
 
-            if ((zone != null) && (String.IsNullOrEmpty(cultureName) == false))
+            if ((zone != null) && (String.IsNullOrEmpty(cultureTab) == false))
             {
                 try
                 {
-                    var culture = MxCultureInfo.Instance.GetCultureInfo(cultureName);
+                    var culture = MxCultureInfo.Instance.GetCultureInfo(cultureTab);
                     if (culture != null)
                     {
-                        var parseResult = LocalTimePattern.Create(MxCultureInfo.GetFormatSpecifier(MxCultureInfo.FormatType.Time, longFormat), MxCultureInfo.Instance.GetCultureInfo(cultureName)).Parse(text);
+                        var parseResult = LocalTimePattern.Create(MxCultureInfo.GetFormatSpecifier(MxCultureInfo.FormatType.Time, longFormat), MxCultureInfo.Instance.GetCultureInfo(cultureTab)).Parse(text);
                         if (parseResult.Success)
                         {
                             var localDate = givenDate.InZone(zone).LocalDateTime.Date;
@@ -143,19 +143,19 @@ namespace C19QCalcLib
             return rc;
         }
 
-        public static bool ParseDate(this string text, DateTimeZone zone, string cultureName, bool longFormat, out Instant result)
+        public static bool ParseDate(this string text, DateTimeZone zone, string cultureTab, bool longFormat, out Instant result)
         {
             var rc = false;
             result = InstantError;
 
-            if ((zone != null) && (String.IsNullOrEmpty(cultureName) == false)  )
+            if ((zone != null) && (String.IsNullOrEmpty(cultureTab) == false)  )
             {
                 try
                 {
-                    var culture = MxCultureInfo.Instance.GetCultureInfo(cultureName);
+                    var culture = MxCultureInfo.Instance.GetCultureInfo(cultureTab);
                     if (culture != null)
                     {
-                        var parseResult = LocalDatePattern.Create(MxCultureInfo.GetFormatSpecifier(MxCultureInfo.FormatType.Date, longFormat), MxCultureInfo.Instance.GetCultureInfo(cultureName)).Parse(text);
+                        var parseResult = LocalDatePattern.Create(MxCultureInfo.GetFormatSpecifier(MxCultureInfo.FormatType.Date, longFormat), MxCultureInfo.Instance.GetCultureInfo(cultureTab)).Parse(text);
                         if (parseResult.Success)
                         {
                             var instant = parseResult.Value.AtMidnight().InZoneStrictly(zone).ToInstant();

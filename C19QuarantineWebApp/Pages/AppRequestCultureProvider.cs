@@ -16,9 +16,12 @@ namespace C19QuarantineWebApp.Pages
 
         public string UiCultureKey { get; set; } = "ui-culture";
 
+        private AppSupportedCultures _supportedCultures;
+
         public AppRequestCultureProvider(RequestLocalizationOptions options)
         {
             Options = options;
+            _supportedCultures = new AppSupportedCultures();
         }
 
         //Create an extension method for the User that returns the Culture that the User has stored in his Profile
@@ -69,20 +72,19 @@ namespace C19QuarantineWebApp.Pages
                     }
                 }
             }
-            var supportedCultures = new AppSupportedCultures();
-            if (supportedCultures.IsSupported(culture) == false)
+            var cookies = new MxCookies(httpContext.RequestServices.GetService<IHttpContextAccessor>());
+            if (_supportedCultures.IsSupported(culture) == false)
             {
-                culture = AppSupportedCultures.DefaultTab;
+                culture = _supportedCultures.GetNearestMatch(culture);
                 updateCookie = true;
             }
-            if (supportedCultures.IsSupported(uiCulture) == false)
+            if (_supportedCultures.IsSupported(uiCulture) == false)
             {
-                uiCulture = AppSupportedCultures.DefaultTab;
+                uiCulture = _supportedCultures.GetNearestMatch(uiCulture, true);
                 updateCookie = true;
             }
-            var httpContextAccessor = httpContext.RequestServices.GetService<IHttpContextAccessor>();
-            if ((updateCookie) && httpContextAccessor != null)
-                supportedCultures.SetCultureCookie(httpContextAccessor, culture, uiCulture);
+            if (updateCookie)
+                cookies.SetValue(MxSupportedCultures.CookieName, _supportedCultures.GetCulturesEncodedValue(culture, uiCulture));
 
             return new ProviderCultureResult(culture, uiCulture);
         }

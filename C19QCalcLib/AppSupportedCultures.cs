@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace C19QCalcLib
 {
     public class AppSupportedCultures : MxSupportedCultures
     {
-        public const string DefaultTab = En;
+        public const string DefaultTab = EnGb;
         public const string DefaultUiTab = En;
 
         public const string En = "en";
@@ -15,7 +16,7 @@ namespace C19QCalcLib
         public const string ItCh = "it-CH";
         public const string DeCh = "de-CH";
 
-        public override string GetDefaultCultureTab()
+        public override string GetCultureTabForNeutralCulture()
         {
             return DefaultTab;
         }
@@ -24,6 +25,33 @@ namespace C19QCalcLib
         {
             return DefaultUiTab;
         }
+
+        public override string GetNearestMatch(string cultureTab, bool forUiCulture = false)
+        {
+            var rc = (forUiCulture) ? DefaultUiTab : DefaultTab;
+
+            if (string.IsNullOrEmpty(cultureTab) == false)
+            {
+                var index = cultureTab.IndexOf('-');
+                var neutralCultureTab = index == -1 ? cultureTab : cultureTab.Substring(0, index);
+
+                if (neutralCultureTab.Equals(En, StringComparison.InvariantCultureIgnoreCase))
+                    rc = (forUiCulture) ? En : EnGb;
+                else if (neutralCultureTab.Equals("fr", StringComparison.InvariantCultureIgnoreCase))
+                    rc = FrCh;
+                else if (neutralCultureTab.Equals("de", StringComparison.InvariantCultureIgnoreCase))
+                    rc = DeCh;
+                else if (neutralCultureTab.Equals("it", StringComparison.InvariantCultureIgnoreCase))
+                    rc = ItCh;
+                else
+                {
+                    //use defaults set above
+                }
+            }
+
+            return rc;
+        }
+
 
         public AppSupportedCultures()
         {

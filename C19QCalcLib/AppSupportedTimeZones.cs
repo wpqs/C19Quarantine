@@ -34,7 +34,7 @@ namespace C19QCalcLib
             return DefaultDaylightSavingAuto;        //default to applying daylight saving during summer time
         }
 
-        public static string GetDaylightSavingName(string zoneAcronym)
+        public override string GetDaylightSavingName(string zoneAcronym)
         {
             var rc = "British Summer Time";
             if (string.IsNullOrEmpty(zoneAcronym) == false)
@@ -44,7 +44,7 @@ namespace C19QCalcLib
             }
             return rc;
         }
-        public static string GetDaylightSavingAcronym(string zoneAcronym)
+        public override string GetDaylightSavingAcronym(string zoneAcronym)
         {
             var rc = "BST";
             if (string.IsNullOrEmpty(zoneAcronym) == false)
@@ -54,7 +54,7 @@ namespace C19QCalcLib
             }
             return rc;
         }
-        public static string GetTzDbName(string zoneAcronym)
+        public override string GetTzDbName(string zoneAcronym)
         {
             var rc = DefaultTzDbName;
             if (string.IsNullOrEmpty(zoneAcronym) == false)

@@ -69,7 +69,7 @@ namespace C19QCalcLibTest
             var text = "30-01-2020 5:45 PM";
             var expected = new LocalDateTime(2020, 01, 30, 17, 45, 00).InZoneStrictly(_zoneGmt).ToInstant();
 
-            Assert.True(text.ParseDateTime(_zoneGmt, false, "en-GB", MxCultureInfo.FormatType.DateTime, false, out var result));
+            Assert.True(text.ParseDateTime(_zoneGmt, "en-GB", false, MxCultureInfo.FormatType.DateTime, false, out var result));
             Assert.Equal(expected, result);
         }
 
@@ -79,20 +79,20 @@ namespace C19QCalcLibTest
             var textWinter = "30-01-2020 17:45:59";
             var winterTime = new LocalDateTime(2020, 01, 30, 17, 45, 59).InZoneStrictly(_zoneGmt).ToInstant();
 
-            Assert.True(textWinter.ParseDateTime(_zoneGmt, false, "en-GB", MxCultureInfo.FormatType.DateTime, true, out var result));
+            Assert.True(textWinter.ParseDateTime(_zoneGmt, "en-GB", false, MxCultureInfo.FormatType.DateTime, true, out var result));
             Assert.Equal(winterTime, result);
 
-            Assert.True(textWinter.ParseDateTime(_zoneGmt, true, "en-GB", MxCultureInfo.FormatType.DateTime, true, out result));
+            Assert.True(textWinter.ParseDateTime(_zoneGmt, "en-GB", true, MxCultureInfo.FormatType.DateTime, true, out result));
             Assert.Equal(winterTime, result);
 
             var textSummerBst = "30-06-2020 17:45:59";
             var summerTimeBst = new LocalDateTime(2020, 06, 30, 17, 45, 59).InZoneStrictly(_zoneGmt).ToInstant();
 
-            Assert.True(textSummerBst.ParseDateTime(_zoneGmt, false, "en-GB", MxCultureInfo.FormatType.DateTime, true, out result));
+            Assert.True(textSummerBst.ParseDateTime(_zoneGmt, "en-GB", false, MxCultureInfo.FormatType.DateTime, true, out result));
             Assert.Equal(summerTimeBst, result);
 
             var textSummerGmt = "30-06-2020 16:45:59";
-            Assert.True(textSummerGmt.ParseDateTime(_zoneGmt, true, "en-GB", MxCultureInfo.FormatType.DateTime, true, out result));
+            Assert.True(textSummerGmt.ParseDateTime(_zoneGmt, "en-GB", true, MxCultureInfo.FormatType.DateTime, true, out result));
             Assert.Equal(summerTimeBst, result);
 
         }
@@ -103,7 +103,7 @@ namespace C19QCalcLibTest
             var text = "Thursday, 30 January 2020 5:45 PM";
             var expected = new LocalDateTime(2020, 01, 30, 17, 45, 00).InZoneStrictly(_zoneGmt).ToInstant();
 
-            Assert.True(text.ParseDateTime(_zoneGmt, false, "en-GB", MxCultureInfo.FormatType.Verbose, false, out var result));
+            Assert.True(text.ParseDateTime(_zoneGmt, "en-GB", false, MxCultureInfo.FormatType.Verbose, false, out var result));
             Assert.Equal(expected, result);
         }
 
@@ -112,7 +112,7 @@ namespace C19QCalcLibTest
         {
             var text = "Thursday, 30 January 2020 17:45:59";
 
-            Assert.True(text.ParseDateTime(_zoneGmt, false, "en-GB", MxCultureInfo.FormatType.Verbose, true, out var result));
+            Assert.True(text.ParseDateTime(_zoneGmt, "en-GB", false, MxCultureInfo.FormatType.Verbose, true, out var result));
             Assert.Equal(_clock.GetCurrentInstant(), result);
         }
 
@@ -121,7 +121,7 @@ namespace C19QCalcLibTest
         {
             var text = "2020-01-30T17:45:59";
 
-            Assert.True(text.ParseDateTime(_zoneGmt, false, "en-GB", MxCultureInfo.FormatType.Machine, false, out var result));
+            Assert.True(text.ParseDateTime(_zoneGmt, "en-GB", false, MxCultureInfo.FormatType.Machine, false, out var result));
             Assert.Equal(_clock.GetCurrentInstant(), result);
         }
 
@@ -130,7 +130,7 @@ namespace C19QCalcLibTest
         {
             var text = "2020-01-30T17:45:59.000000000 (ISO)";
 
-            Assert.True(text.ParseDateTime(_zoneGmt, false, "en-GB", MxCultureInfo.FormatType.Machine, true, out var result));
+            Assert.True(text.ParseDateTime(_zoneGmt, "en-GB", false, MxCultureInfo.FormatType.Machine, true, out var result));
             Assert.Equal(_clock.GetCurrentInstant(), result);
         }
 
@@ -142,7 +142,7 @@ namespace C19QCalcLibTest
             var expected = new LocalDateTime(2020, 01, 30, 17, 45, 00).InZoneStrictly(_zoneGmt).ToInstant();
 
             Assert.True(textDate.ParseDate(_zoneGmt, "en-GB", false, out var resultDate));
-            Assert.True(textTime.ParseTime(_zoneGmt, false, "en-GB", resultDate, false, out var result));
+            Assert.True(textTime.ParseTime(_zoneGmt, "en-GB", false, resultDate, false, out var result));
 
             Assert.Equal(expected, result);
         }
@@ -154,7 +154,7 @@ namespace C19QCalcLibTest
             var textTime = "17:45:59";
 
             Assert.True(textDate.ParseDate(_zoneGmt, "en-GB", true, out var resultDate));
-            Assert.True(textTime.ParseTime(_zoneGmt, false, "en-GB", resultDate, true, out var result));
+            Assert.True(textTime.ParseTime(_zoneGmt, "en-GB", false, resultDate, true, out var result));
 
             Assert.Equal(_clock.GetCurrentInstant(), result);
         }
@@ -215,16 +215,16 @@ namespace C19QCalcLibTest
             var bstStartsSpring = gmtEndingSpring.Plus(Duration.FromSeconds(1));                                                         //Instant for 01:00:00 GMT which is 02:00:00 BST - start of daylight saving
                                                                                                                                          //PASS
             var text = "29-03-2020 00:59:59";   //March 29 2020, 00:59:59 GMT - 1 sec before daylight saving starts
-            Assert.True(text.ParseDateTime(_zoneGmt, false, "en-GB", MxCultureInfo.FormatType.DateTime, true, out var result));
+            Assert.True(text.ParseDateTime(_zoneGmt, "en-GB", false, MxCultureInfo.FormatType.DateTime, true, out var result));
             Assert.Equal(gmtEndingSpring, result);
             //FAIL
             text = "29-03-2020 01:00:00";       //clocks move forward at 1:00:00 GMT so BST times between 01:00:00 GMT and 01:59:59 GMT are invalid
-            Assert.False(text.ParseDateTime(_zoneGmt, false, "en-GB", MxCultureInfo.FormatType.DateTime, true, out result));
+            Assert.False(text.ParseDateTime(_zoneGmt, "en-GB", false, MxCultureInfo.FormatType.DateTime, true, out result));
             text = "29-03-2020 01:59:59";
-            Assert.False(text.ParseDateTime(_zoneGmt, false, "en-GB", MxCultureInfo.FormatType.DateTime, true, out result));
+            Assert.False(text.ParseDateTime(_zoneGmt, "en-GB", false, MxCultureInfo.FormatType.DateTime, true, out result));
             //PASS
             text = "29-03-2020 02:00:00";       //March 29 2020, 02:00:00 BST (01:00:00 GMT)  - daylight saving  starts
-            Assert.True(text.ParseDateTime(_zoneGmt, false, "en-GB", MxCultureInfo.FormatType.DateTime, true, out result));
+            Assert.True(text.ParseDateTime(_zoneGmt, "en-GB", false, MxCultureInfo.FormatType.DateTime, true, out result));
             Assert.Equal(bstStartsSpring, result);
         }
 
@@ -235,16 +235,16 @@ namespace C19QCalcLibTest
             var bstFirstValidTime = bstLastValidTime.Plus(Duration.FromHours(2).Plus(Duration.FromSeconds(1)));                             //  Instant for 02:00:00 GMT 
                                                                                                                                             //PASS
             var text = "25-10-2020 00:59:59";   //Oct 25 2020, 00:59:59 BST (24-10-20, 23:59:59 GMT) - 1 hour 1 sec before daylight saving ends 
-            Assert.True(text.ParseDateTime(_zoneGmt, false, "en-GB", MxCultureInfo.FormatType.DateTime, true, out var result));
+            Assert.True(text.ParseDateTime(_zoneGmt, "en-GB", false, MxCultureInfo.FormatType.DateTime, true, out var result));
             Assert.Equal(bstLastValidTime, result);
             //FAIL
             text = "25-10-2020 01:00:00";       //clocks move back at 2:00:00 BST (01:00:00 GMT) so times between 01:00:00 BST and 01:59:59 BST are ambiguous
-            Assert.False(text.ParseDateTime(_zoneGmt, false, "en-GB", MxCultureInfo.FormatType.DateTime, true, out result));
+            Assert.False(text.ParseDateTime(_zoneGmt, "en-GB", false, MxCultureInfo.FormatType.DateTime, true, out result));
             text = "25-10-2020 01:59:59";
-            Assert.False(text.ParseDateTime(_zoneGmt, false, "en-GB", MxCultureInfo.FormatType.DateTime, true, out result));
+            Assert.False(text.ParseDateTime(_zoneGmt, "en-GB", false, MxCultureInfo.FormatType.DateTime, true, out result));
             //PASS
             text = "25-10-2020 02:00:00";       //Oct 25 2020, 2:00:00 GMT 
-            Assert.True(text.ParseDateTime(_zoneGmt, false, "en-GB", MxCultureInfo.FormatType.DateTime, true, out result));
+            Assert.True(text.ParseDateTime(_zoneGmt, "en-GB", false, MxCultureInfo.FormatType.DateTime, true, out result));
             Assert.Equal(bstFirstValidTime, result);
         }
 

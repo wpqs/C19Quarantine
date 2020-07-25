@@ -16,22 +16,28 @@ namespace C19QCalcLibTest
         [Fact]
         public void GetDaylightSavingNameTest()
         {
-            Assert.Equal("British Summer Time", AppSupportedTimeZones.GetDaylightSavingName(AppSupportedTimeZones.AcronymGmt));
-            Assert.Equal("Central Europe Summer Time", AppSupportedTimeZones.GetDaylightSavingName(AppSupportedTimeZones.AcronymCet));
+            var zones = new AppSupportedTimeZones();
+
+            Assert.Equal("British Summer Time", zones.GetDaylightSavingName(AppSupportedTimeZones.AcronymGmt));
+            Assert.Equal("Central Europe Summer Time", zones.GetDaylightSavingName(AppSupportedTimeZones.AcronymCet));
         }
 
         [Fact]
         public void GetDaylightSavingAcronymTest()
         {
-            Assert.Equal("BST", AppSupportedTimeZones.GetDaylightSavingAcronym(AppSupportedTimeZones.AcronymGmt));
-            Assert.Equal("CEST", AppSupportedTimeZones.GetDaylightSavingAcronym(AppSupportedTimeZones.AcronymCet));
+            var zones = new AppSupportedTimeZones();
+
+            Assert.Equal("BST", zones.GetDaylightSavingAcronym(AppSupportedTimeZones.AcronymGmt));
+            Assert.Equal("CEST", zones.GetDaylightSavingAcronym(AppSupportedTimeZones.AcronymCet));
         }
 
         [Fact]
         public void GetTzDbNameTest()
         {
-            Assert.Equal("Europe/London", AppSupportedTimeZones.GetTzDbName(AppSupportedTimeZones.AcronymGmt));
-            Assert.Equal("Europe/Paris", AppSupportedTimeZones.GetTzDbName(AppSupportedTimeZones.AcronymCet));
+            var zones = new AppSupportedTimeZones();
+
+            Assert.Equal("Europe/London", zones.GetTzDbName(AppSupportedTimeZones.AcronymGmt));
+            Assert.Equal("Europe/Paris", zones.GetTzDbName(AppSupportedTimeZones.AcronymCet));
         }
     }
 }

@@ -123,4 +123,16 @@
   <data name="Welcome" xml:space="preserve">
     <value>Welcome - en-US</value>
   </data>
+  <data name="WelcomeP1" xml:space="preserve">
+    <value>Welcome - en-US - {0}</value>
+    <comment>P1 = 1 parameter (name) e.g. Welcome - en-US - Fred</comment>
+  </data>
+  <data name="WelcomeP2" xml:space="preserve">
+    <value>Welcome - en-US - {0}, {1}</value>
+    <comment>P2 = 2 parameters (name, date) e.g. Welcome - en-US - Fred, 13/07/20</comment>
+  </data>
+  <data name="WelcomeP3" xml:space="preserve">
+    <value>Welcome - en-US - {0}, {1} - {2,0:N2}</value>
+    <comment>P3 = 3 parameters (name, date, numeric) e.g. Welcome - en-US - Fred, 13/07/20 - 1,000.00</comment>
+  </data>
 </root>

@@ -121,7 +121,7 @@ namespace C19QCalcLib
                         rc = $"This value is required";
                     else
                     {
-                        if (startQuarantineLocal.ParseDateTime(zone, WithoutDaylightSavings, CultureTag, MxCultureInfo.FormatType.DateTime, false, out var isolation) == false)
+                        if (startQuarantineLocal.ParseDateTime(zone, CultureTag, WithoutDaylightSavings, MxCultureInfo.FormatType.DateTime, false, out var isolation) == false)
                             rc = $"Please try again with a valid date/time like {SampleDateTime}";
                         else
                         {
@@ -160,7 +160,7 @@ namespace C19QCalcLib
                         StartSymptoms = null;  //Ok, as value is optional
                     else
                     {
-                        if (startSymptomsLocal.ParseDateTime(zone, WithoutDaylightSavings, CultureTag, MxCultureInfo.FormatType.DateTime, false, out var symptoms) == false)
+                        if (startSymptomsLocal.ParseDateTime(zone, CultureTag, WithoutDaylightSavings, MxCultureInfo.FormatType.DateTime, false, out var symptoms) == false)
                             rc = $"Please try again with a valid date/time like {SampleDateTime}";
                         else
                         {

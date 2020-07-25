@@ -28,7 +28,7 @@ namespace C19QuarantineWebApp
             services.Configure<RequestLocalizationOptions>(options =>
             {
                 var cultures = new AppSupportedCultures();
-                options.DefaultRequestCulture = new RequestCulture(culture: cultures.GetDefaultCultureTab(), uiCulture: cultures.GetDefaultUiCultureTab());
+                options.DefaultRequestCulture = new RequestCulture(culture: cultures.GetCultureTabForNeutralCulture(), uiCulture: cultures.GetDefaultUiCultureTab());
                 options.SupportedCultures = cultures.GetSupportedCulturesInfo();
                 options.SupportedUICultures = cultures.GetSupportedCulturesInfo();
                 //options.FallBackToParentCultures = true;    //default to true - if en-US isn't in list of SupportedCultures then fall-back to en

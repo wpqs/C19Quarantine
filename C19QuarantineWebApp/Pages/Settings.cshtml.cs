@@ -7,7 +7,7 @@ namespace C19QuarantineWebApp.Pages
 {
     public class SettingsModel : PageModel
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly MxCookies _cookies;
         // ReSharper disable once UnusedAutoPropertyAccessor.Local
         public string ProgramError { get; private set; }
 
@@ -25,27 +25,27 @@ namespace C19QuarantineWebApp.Pages
 
         public SettingsModel(IHttpContextAccessor httpContextAccessor)
         {
-            _httpContextAccessor = httpContextAccessor;
+            _cookies = new MxCookies(httpContextAccessor);
         }
 
         public void OnGet()
         {
             SupportedAppTimeZones = new AppSupportedTimeZones();
 
-            WithoutDaylightSaving = !SupportedAppTimeZones.IsDaylightSavingAuto(_httpContextAccessor);
-            SelectedTimeZone = SupportedAppTimeZones.GetTimeZoneAcronymFromCookie(_httpContextAccessor);
+            WithoutDaylightSaving = !SupportedAppTimeZones.IsDaylightSavingAuto(_cookies.GetValue(MxSupportedTimeZones.CookieName));
+            SelectedTimeZone = SupportedAppTimeZones.GetTimeZoneAcronym(_cookies.GetValue(MxSupportedTimeZones.CookieName));
 
             SupportedAppCultures = new AppSupportedCultures();
-            SelectedCultureTab = SupportedAppCultures.GetCultureTabFromCookie(_httpContextAccessor);
+            SelectedCultureTab = SupportedAppCultures.GetCultureTab(_cookies.GetValue(MxSupportedCultures.CookieName));
         }
 
         public IActionResult OnPost()
         {
             SupportedAppTimeZones = new AppSupportedTimeZones();
-            SupportedAppTimeZones.SetTimeZoneCookie(_httpContextAccessor, SelectedTimeZone, !WithoutDaylightSaving);
+            _cookies.SetValue(MxSupportedTimeZones.CookieName, SupportedAppTimeZones.GetTimeZoneEncodedValue(SelectedTimeZone, !WithoutDaylightSaving));
 
-            SupportedAppCultures = new AppSupportedCultures();
-            SupportedAppCultures.SetCultureCookie(_httpContextAccessor, SelectedCultureTab, SelectedCultureTab);
+             SupportedAppCultures = new AppSupportedCultures();
+            _cookies.SetValue(MxSupportedCultures.CookieName, SupportedAppCultures.GetCulturesEncodedValue(SelectedCultureTab, SelectedCultureTab));
 
             return new RedirectToPageResult("Index");
         }

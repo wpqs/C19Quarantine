@@ -32,7 +32,9 @@ namespace C19QCalcLibTest
         [Fact]
         public void ValidateTest()
         {
-            var form = new IndexFormProc(_clock, AppSupportedTimeZones.GetTzDbName("GMT"), "en-GB", false);
+            var zones = new AppSupportedTimeZones();
+
+            var form = new IndexFormProc(_clock, zones.GetTzDbName("GMT"), "en-GB", false);
 
             Assert.False(form.IsValid());
 
@@ -58,7 +60,9 @@ namespace C19QCalcLibTest
         [Fact]
         public void ValidateMissingKeyFailTest()
         {
-            var form = new IndexFormProc(_clock, AppSupportedTimeZones.GetTzDbName("GMT"), "en-GB", false);
+            var zones = new AppSupportedTimeZones();
+
+            var form = new IndexFormProc(_clock, zones.GetTzDbName("GMT"), "en-GB", false);
 
             Assert.False(form.IsValid());
 
@@ -78,7 +82,9 @@ namespace C19QCalcLibTest
         [Fact]
         public void ValidateMultipleFailTest()
         {
-            var form = new IndexFormProc(_clock, AppSupportedTimeZones.GetTzDbName("GMT"), "en-GB", false);
+            var zones = new AppSupportedTimeZones();
+
+            var form = new IndexFormProc(_clock, zones.GetTzDbName("GMT"), "en-GB", false);
 
             Assert.False(form.IsValid());
 
@@ -107,7 +113,9 @@ namespace C19QCalcLibTest
         [Fact]
         public void BasicTest()
         {
-            var form = new IndexFormProc(_clock, AppSupportedTimeZones.GetTzDbName("GMT"), "en-GB", false);
+            var zones = new AppSupportedTimeZones();
+
+            var form = new IndexFormProc(_clock, zones.GetTzDbName("GMT"), "en-GB", false);
 
             Assert.Null(form.ValidateHasSymptoms("no"));
             Assert.Null(form.ValidateStartIsolation("01-01-2020 5:35 PM"));
@@ -125,7 +133,9 @@ namespace C19QCalcLibTest
         [Fact]
         public void HasSymptomsYesTest()
         {
-            var form = new IndexFormProc(_clock, AppSupportedTimeZones.GetTzDbName("GMT"), "en-GB", false);
+            var zones = new AppSupportedTimeZones();
+
+            var form = new IndexFormProc(_clock, zones.GetTzDbName("GMT"), "en-GB", false);
             var tim = new LocalDateTime(2020, 01, 1, 17, 35, 00).InZoneStrictly(_zoneGmt).ToInstant();
 
 
@@ -142,7 +152,9 @@ namespace C19QCalcLibTest
         [Fact]
         public void HasSymptomsNoTest()
         {
-            var form = new IndexFormProc(_clock, AppSupportedTimeZones.GetTzDbName("GMT"), "en-GB", false);
+            var zones = new AppSupportedTimeZones();
+
+            var form = new IndexFormProc(_clock, zones.GetTzDbName("GMT"), "en-GB", false);
             var tim = new LocalDateTime(2020, 01, 1, 17, 35, 00).InZoneStrictly(_zoneGmt).ToInstant();
 
 
@@ -159,7 +171,9 @@ namespace C19QCalcLibTest
         [Fact]
         public void NullSymptomsTest()
         {
-            var form = new IndexFormProc(_clock, AppSupportedTimeZones.GetTzDbName("GMT"), "en-GB", false);
+            var zones = new AppSupportedTimeZones();
+
+            var form = new IndexFormProc(_clock, zones.GetTzDbName("GMT"), "en-GB", false);
             var tim = new LocalDateTime(2020, 01, 1, 17, 35, 00).InZoneStrictly(_zoneGmt).ToInstant();
 
             Assert.Null(form.ValidateStartIsolation("01-01-2020 5:35 PM"));
@@ -173,7 +187,9 @@ namespace C19QCalcLibTest
         [Fact]
         public void SymptomsNotValidatedTest()
         {
-            var form = new IndexFormProc(_clock, AppSupportedTimeZones.GetTzDbName("GMT"), "en-GB", false);
+            var zones = new AppSupportedTimeZones();
+
+            var form = new IndexFormProc(_clock, zones.GetTzDbName("GMT"), "en-GB", false);
             var tim = new LocalDateTime(2020, 01, 1, 17, 35, 00).InZoneStrictly(_zoneGmt).ToInstant();
 
             Assert.Null(form.ValidateStartIsolation("01-01-2020 5:35 PM"));
@@ -187,7 +203,9 @@ namespace C19QCalcLibTest
         [Fact]
         public void EmptySymptomsTest()
         {
-            var form = new IndexFormProc(_clock, AppSupportedTimeZones.GetTzDbName("GMT"), "en-GB", false);
+            var zones = new AppSupportedTimeZones();
+
+            var form = new IndexFormProc(_clock, zones.GetTzDbName("GMT"), "en-GB", false);
             var tim = new LocalDateTime(2020, 01, 1, 17, 35, 00).InZoneStrictly(_zoneGmt).ToInstant();
 
             Assert.Null(form.ValidateStartIsolation("01-01-2020 5:35 PM"));
@@ -202,7 +220,9 @@ namespace C19QCalcLibTest
         [Fact]
         public void SymptomsValidatedBeforeIsolationTest()
         {
-            var form = new IndexFormProc(_clock, AppSupportedTimeZones.GetTzDbName("GMT"), "en-GB", false);
+            var zones = new AppSupportedTimeZones();
+
+            var form = new IndexFormProc(_clock, zones.GetTzDbName("GMT"), "en-GB", false);
             var tim = new LocalDateTime(2020, 01, 1, 17, 35, 00).InZoneStrictly(_zoneGmt).ToInstant();
 
             Assert.Contains("You must set the start of your self-isolation before giving the start of your symptoms", form.ValidateStartSymptoms("01-01-2020 5:01 PM"));
@@ -219,7 +239,9 @@ namespace C19QCalcLibTest
         [Fact]
         public void StartSymptomsAfterCurrentTimeFailTest()
         {
-            var form = new IndexFormProc(_clock, AppSupportedTimeZones.GetTzDbName("GMT"), "en-GB", false);
+            var zones = new AppSupportedTimeZones();
+
+            var form = new IndexFormProc(_clock, zones.GetTzDbName("GMT"), "en-GB", false);
             Assert.Null(form.ValidateStartIsolation("01-01-2020 5:35 PM"));
             Assert.Contains("This value is after the current time", form.ValidateStartSymptoms("01-01-2050 5:01 PM"));
 
@@ -230,7 +252,9 @@ namespace C19QCalcLibTest
         [Fact]
         public void StartSymptomsBeforeSelfIsolationFailTest()
         {
-            var form = new IndexFormProc(_clock, AppSupportedTimeZones.GetTzDbName("GMT"), "en-GB", false);
+            var zones = new AppSupportedTimeZones();
+
+            var form = new IndexFormProc(_clock, zones.GetTzDbName("GMT"), "en-GB", false);
 
             Assert.Null(form.ValidateStartIsolation("01-01-2020 5:01 PM"));
             Assert.Contains("This value is before the start of your self-isolation", form.ValidateStartSymptoms("01-01-2019 5:01 PM"));
@@ -241,7 +265,9 @@ namespace C19QCalcLibTest
         [Fact]
         public void HasSymptomsNullFailTest()
         {
-            var form = new IndexFormProc(_clock, AppSupportedTimeZones.GetTzDbName("GMT"), "en-GB", false);
+            var zones = new AppSupportedTimeZones();
+
+            var form = new IndexFormProc(_clock, zones.GetTzDbName("GMT"), "en-GB", false);
             Assert.Equal("This value is required", form.ValidateHasSymptoms(null));
             Assert.False(form.IsValid());
         }
@@ -249,7 +275,9 @@ namespace C19QCalcLibTest
         [Fact]
         public void HasSymptomsEmptyFailTest()
         {
-            var form = new IndexFormProc(_clock, AppSupportedTimeZones.GetTzDbName("GMT"), "en-GB", false);
+            var zones = new AppSupportedTimeZones();
+
+            var form = new IndexFormProc(_clock, zones.GetTzDbName("GMT"), "en-GB", false);
 
             Assert.Equal("This value is required", form.ValidateHasSymptoms(""));
 
@@ -259,7 +287,9 @@ namespace C19QCalcLibTest
         [Fact]
         public void HasSymptomsInvalidFailTest()
         {
-            var form = new IndexFormProc(_clock, AppSupportedTimeZones.GetTzDbName("GMT"), "en-GB", false);
+            var zones = new AppSupportedTimeZones();
+
+            var form = new IndexFormProc(_clock, zones.GetTzDbName("GMT"), "en-GB", false);
 
             Assert.Equal("Please enter either 'yes' or 'no'", form.ValidateHasSymptoms("gg"));
 
@@ -269,7 +299,9 @@ namespace C19QCalcLibTest
         [Fact]
         public void StartIsolationEmptyFailTest()
         {
-            var form = new IndexFormProc(_clock, AppSupportedTimeZones.GetTzDbName("GMT"), "en-GB", false);
+            var zones = new AppSupportedTimeZones();
+
+            var form = new IndexFormProc(_clock, zones.GetTzDbName("GMT"), "en-GB", false);
 
             Assert.Equal("This value is required", form.ValidateStartIsolation(""));
 
@@ -279,7 +311,9 @@ namespace C19QCalcLibTest
         [Fact]
         public void StartIsolationNullFailTest()
         {
-            var form = new IndexFormProc(_clock, AppSupportedTimeZones.GetTzDbName("GMT"), "en-GB", false);
+            var zones = new AppSupportedTimeZones();
+
+            var form = new IndexFormProc(_clock, zones.GetTzDbName("GMT"), "en-GB", false);
 
             Assert.Equal("This value is required", form.ValidateStartIsolation(null));
 
@@ -289,7 +323,9 @@ namespace C19QCalcLibTest
         [Fact]
         public void StartIsolationInvalidDateFailTest()
         {
-            var form = new IndexFormProc(_clock, AppSupportedTimeZones.GetTzDbName("GMT"), "en-GB", false);
+            var zones = new AppSupportedTimeZones();
+
+            var form = new IndexFormProc(_clock, zones.GetTzDbName("GMT"), "en-GB", false);
 
             Assert.Contains("Please try again with a valid date/time like", form.ValidateStartIsolation("01-01-20xx 17:01:59"));
 
@@ -300,7 +336,9 @@ namespace C19QCalcLibTest
         [Fact]
         public void StartIsolationAfterCurrentTimeFailTest()
         {
-            var form = new IndexFormProc(_clock, AppSupportedTimeZones.GetTzDbName("GMT"), "en-GB", false);
+            var zones = new AppSupportedTimeZones();
+
+            var form = new IndexFormProc(_clock, zones.GetTzDbName("GMT"), "en-GB", false);
 
             Assert.Contains("This value is after the current time", form.ValidateStartIsolation("01-01-2050 5:01 PM"));
 

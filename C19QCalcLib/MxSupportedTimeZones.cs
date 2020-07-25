@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace C19QCalcLib
 {
     public abstract class MxSupportedTimeZones
     {
+        public abstract string GetTzDbName(string zoneAcronym);
+        public abstract string GetDaylightSavingAcronym(string zoneAcronym);
+        public abstract string GetDaylightSavingName(string zoneAcronym);
         public abstract string GetDefaultTimeZoneAcronym();
         public abstract bool GetDefaultDaylightSavingAuto();
 
@@ -16,7 +18,7 @@ namespace C19QCalcLib
         public const int    CookieExpiryDays = 3;
 
         public const string DaylightSavingAutoApplyYes = "yes"; //daylight saving is applied when time is in daylight saving period, otherwise it's not - typically the default
-        public const string DaylightSavingAutoApplyNo = "no";   //use if you have say a GMT clock to which daylight saving is never applied  
+        public const string DaylightSavingAutoApplyNo = "no";   //use if you have (say) a GMT clock to which daylight saving is never applied  
         
         public const string CookieTimeZoneKey = "tz=";
         public const string CookieDsAutoKey = "dsa=";
@@ -28,6 +30,11 @@ namespace C19QCalcLib
         public string Selected { get; set; }
         public List<SelectListItem> Items { get; set; }
 
+        public bool IsSupported(string timeZoneAcronym)
+        {
+            return (string.IsNullOrEmpty(timeZoneAcronym) == false) && (Items?.Find(a => a.Value == timeZoneAcronym) != null);
+        }
+
         public string[] GetSupportedTimeZones()
         {
             var list = new List<string>();
@@ -38,31 +45,45 @@ namespace C19QCalcLib
             return list.ToArray();
         }
 
-        public bool IsSupported(string timeZoneAcronym)
+        public string GetTimeZoneAcronym(string encodedValue, bool valueIsCookie = true)
         {
-            return (string.IsNullOrEmpty(timeZoneAcronym) == false) && (Items?.Find(a => a.Value == timeZoneAcronym) != null);
-        }
+            var rc = GetDefaultTimeZoneAcronym();
 
-        public bool SetTimeZoneCookie(IHttpContextAccessor httpContextAccessor, string timeZoneAcronym, bool daylightSavingAutoApply)
-        {
-            return MxCookies.SetValue(httpContextAccessor, CookieName, GetTimeZoneValueToSet(timeZoneAcronym, daylightSavingAutoApply), MxSupportedTimeZones.CookieExpiryDays, true);
-        }
+            var timeZoneKey = (valueIsCookie) ? CookieTimeZoneKey : QueryTimeZoneKey;
+            var keySeparator = (valueIsCookie) ? CookieKeySeparator : QueryKeySeparator;
 
-        public string GetTimeZoneAcronymFromCookie(IHttpContextAccessor httpContextAccessor)
-        {
-            return GetTimeZoneAcronymFromValue(MxCookies.GetValue(httpContextAccessor, CookieName));
-        }
-
-        public bool IsDaylightSavingAuto(IHttpContextAccessor httpContextAccessor)
-        {
-            var rc = true;
-            var value = MxCookies.GetValue(httpContextAccessor, CookieName);
-            if (value != MxCookies.ErrorValue)
-                rc = (GetDaylightSavingAutoFromValue(value) != DaylightSavingAutoApplyNo);
+            if (string.IsNullOrEmpty(encodedValue) == false)
+            {
+                var start = encodedValue.IndexOf(timeZoneKey, StringComparison.Ordinal);
+                var end = encodedValue.IndexOf(keySeparator, StringComparison.Ordinal);
+                if ((start == 0) && (end != -1) && ((end - timeZoneKey.Length) > 0))
+                {
+                    var timeZoneAcronym = encodedValue.Substring(timeZoneKey.Length, end - timeZoneKey.Length);
+                    if (IsSupported(timeZoneAcronym))
+                        rc = timeZoneAcronym;
+                }
+            }
             return rc;
         }
 
-        public string GetTimeZoneValueToSet(string timeZoneAcronym, bool daylightSavingAutoApply = true, bool getCookieValue = true)
+        public bool IsDaylightSavingAuto(string encodedValue, bool valueIsCookie=true)
+        {
+            var rc = GetDefaultDaylightSavingAuto();
+
+            var dsAutoKey = (valueIsCookie) ? CookieDsAutoKey : QueryDsAutoKey;
+            var keySeparator = (valueIsCookie) ? CookieKeySeparator : QueryKeySeparator;
+
+            if (string.IsNullOrEmpty(encodedValue) == false)
+            {
+                var key = keySeparator + dsAutoKey;
+                var start = encodedValue.IndexOf(key, StringComparison.Ordinal);
+                if ((start != -1) && ((start + key.Length) < (encodedValue.Length - 1)))
+                    rc = IsValueDaylightSavingAuto(encodedValue.Substring(start + key.Length));
+            }
+            return rc;
+        }
+
+        public string GetTimeZoneEncodedValue(string timeZoneAcronym, bool daylightSavingAutoApply = true, bool getCookieValue = true)
         {
 
             var timeZoneKey = (getCookieValue) ? CookieTimeZoneKey : QueryTimeZoneKey;
@@ -77,47 +98,14 @@ namespace C19QCalcLib
             return rc;
         }
 
-        public string GetTimeZoneAcronymFromValue(string value, bool valueIsCookie = true)
-        {
-            var rc = GetDefaultTimeZoneAcronym();
-
-            var timeZoneKey = (valueIsCookie) ? CookieTimeZoneKey : QueryTimeZoneKey;
-            var keySeparator = (valueIsCookie) ? CookieKeySeparator : QueryKeySeparator;
-
-            if (string.IsNullOrEmpty(value) == false)
-            {
-                var start = value.IndexOf(timeZoneKey, StringComparison.Ordinal);
-                var end = value.IndexOf(keySeparator, StringComparison.Ordinal);
-                if ((start == 0) && (end != -1) && ((end - timeZoneKey.Length) > 0))
-                {
-                    var timeZoneAcronym = value.Substring(timeZoneKey.Length, end - timeZoneKey.Length);
-                    if (IsSupported(timeZoneAcronym))
-                        rc = timeZoneAcronym;
-                }
-            }
-            return rc;
-        }
-
-        public string GetDaylightSavingAutoFromValue(string value, bool valueIsCookie = true)
-        {
-            var rc = GetDefaultDaylightSavingAuto() ? DaylightSavingAutoApplyYes : DaylightSavingAutoApplyNo;
-
-            var dsAutoKey = (valueIsCookie) ? CookieDsAutoKey : QueryDsAutoKey;
-            var keySeparator = (valueIsCookie) ? CookieKeySeparator : QueryKeySeparator;
-
-            if (string.IsNullOrEmpty(value) == false)
-            {
-                var key = keySeparator + dsAutoKey;
-                var start = value.IndexOf(key, StringComparison.Ordinal);
-                if ((start != -1) && ((start + key.Length) < (value.Length - 1)))
-                    rc = value.Substring(start + key.Length);
-            }
-            return rc;
-        }
-        
         private string GetDaylightSavingAutoValue(bool value)                                
         {
             return (value) ? DaylightSavingAutoApplyYes : DaylightSavingAutoApplyNo;
+        }
+
+        private bool IsValueDaylightSavingAuto(string value)
+        {
+            return (string.IsNullOrEmpty(value) || (!value.Equals(DaylightSavingAutoApplyNo)));
         }
 
         public static string GetReport(string startOfLine, string endOfLine, string tab, string endOfRecord, string timeZoneId = null)
