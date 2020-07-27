@@ -13,7 +13,8 @@ namespace C19QCalcLib
 
         public AppSupportedCultures SupportedCultures { get; }
         public AppSupportedTimeZones SupportedTimeZones { get; }
-        public MxCookies Cookies { get; private set; }
+
+        public IHttpContextAccessor HttpContextAccessor { get; private set; }
 
         private ResourceManager _rm;
 
@@ -24,19 +25,21 @@ namespace C19QCalcLib
             SupportedTimeZones = new AppSupportedTimeZones();
         }
 
-        protected MxLib(IHttpContextAccessor httpContextAccessor) : this() 
+        protected MxLib(IHttpContextAccessor httpContextAccessor) : this()
         {
-            Cookies = new MxCookies(httpContextAccessor);
+            HttpContextAccessor = httpContextAccessor;
         }
 
         public string GetCultureTab()
         {
-            return SupportedCultures.GetCultureTab(Cookies.GetValue(MxSupportedCultures.CookieName));
+            var cookies = new MxCookies(HttpContextAccessor);
+            return SupportedCultures.GetCultureTab(cookies.GetValue(MxSupportedCultures.CookieName));
         }
 
         public string GetUiCultureTab()
         {
-            return SupportedCultures.GetUiCultureTab(Cookies.GetValue(MxSupportedCultures.CookieName));
+            var cookies = new MxCookies(HttpContextAccessor);
+            return SupportedCultures.GetUiCultureTab(cookies.GetValue(MxSupportedCultures.CookieName));
         }
 
         public bool SetCurrentCulture(string cultureTab = null, string uiCultureTab = null)
@@ -63,8 +66,9 @@ namespace C19QCalcLib
 
             try
             {
+                var cookies = new MxCookies(HttpContextAccessor);
                 if (SupportedCultures.IsSupported(cultureTab) == false)
-                    cultureTab = SupportedCultures.GetCultureTab(Cookies.GetValue(MxSupportedCultures.CookieName));
+                    cultureTab = SupportedCultures.GetCultureTab(cookies.GetValue(MxSupportedCultures.CookieName));
 
                 rc = timeInstant.ToString(cultureTab, DateTimeZoneProviders.Tzdb[SupportedTimeZones.GetTzDbName(cultureTab)]);
             }
@@ -79,8 +83,9 @@ namespace C19QCalcLib
         {
             var rc = ExtNodatime.InstantError;
 
+            var cookies = new MxCookies(HttpContextAccessor);
             if (SupportedCultures.IsSupported(cultureTab) == false)
-                cultureTab = SupportedCultures.GetCultureTab(Cookies.GetValue(MxSupportedCultures.CookieName));
+                cultureTab = SupportedCultures.GetCultureTab(cookies.GetValue(MxSupportedCultures.CookieName));
 
             if (timeDate.ParseDateTime(DateTimeZoneProviders.Tzdb[SupportedTimeZones.GetTzDbName(cultureTab)], cultureTab, withoutDaylightSaving, formatType, longFormat, out var result))
                 rc = result;
@@ -92,8 +97,9 @@ namespace C19QCalcLib
         {
             var rc = ExtNodatime.InstantError;
 
+            var cookies = new MxCookies(HttpContextAccessor);
             if (SupportedCultures.IsSupported(cultureTab) == false)
-                cultureTab = SupportedCultures.GetCultureTab(Cookies.GetValue(MxSupportedCultures.CookieName));
+                cultureTab = SupportedCultures.GetCultureTab(cookies.GetValue(MxSupportedCultures.CookieName));
 
             if (time.ParseTime(DateTimeZoneProviders.Tzdb[SupportedTimeZones.GetTzDbName(cultureTab)], cultureTab, withoutDaylightSaving, givenDate, longFormat, out var result))
                 rc = result;
@@ -105,8 +111,9 @@ namespace C19QCalcLib
         {
             var rc = ExtNodatime.InstantError;
 
+            var cookies = new MxCookies(HttpContextAccessor);
             if (SupportedCultures.IsSupported(cultureTab) == false)
-                cultureTab = SupportedCultures.GetCultureTab(Cookies.GetValue(MxSupportedCultures.CookieName));
+                cultureTab = SupportedCultures.GetCultureTab(cookies.GetValue(MxSupportedCultures.CookieName));
 
             if (date.ParseDate(DateTimeZoneProviders.Tzdb[SupportedTimeZones.GetTzDbName(cultureTab)], cultureTab, longFormat, out var result))
                 rc = result;
@@ -127,8 +134,9 @@ namespace C19QCalcLib
                         _rm = new ResourceManager(baseName, GetResourcesAsm());
                     }
 
+                    var cookies = new MxCookies(HttpContextAccessor);
                     if (SupportedCultures.IsSupported(uiCultureTab) == false)
-                        uiCultureTab = SupportedCultures.GetUiCultureTab(Cookies.GetValue(MxSupportedCultures.CookieName));
+                        uiCultureTab = SupportedCultures.GetUiCultureTab(cookies.GetValue(MxSupportedCultures.CookieName));
                     var uiCultureInfo = SupportedCultures.GetCultureInfo(uiCultureTab);
                     if (uiCultureInfo != null)
                     {

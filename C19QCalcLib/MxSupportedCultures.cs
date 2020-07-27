@@ -29,6 +29,11 @@ namespace C19QCalcLib
             return (string.IsNullOrEmpty(cultureTab) == false) && (Items?.Find(a => a.Value.Equals(cultureTab, StringComparison.InvariantCultureIgnoreCase)) != null);
         }
 
+        public static bool HasRegion(string cultureTab)
+        {
+            return ((cultureTab?.Length ?? 0) > 3) && (cultureTab?.Contains("-") ?? false);
+        }
+
         public string[] GetSupportedCultures()
         {
             var list = new List<string>();

@@ -60,6 +60,9 @@ namespace C19QCalcLib
                     if (expiryDays != ExpiryEndOfSession)
                         expiry = new DateTimeOffset(DateTime.Now.AddDays(ExpiryDays));
                     Accessor.HttpContext.Response.Cookies.Append(name, value, new CookieOptions {Expires = expiry, IsEssential = isEssential});
+                    // if ((Accessor.HttpContext.Request.Cookies.TryGetValue(name, out var result) == false) || (result != value))
+                    //     rc = false; //see https://stackoverflow.com/questions/63114092/get-cookie-fails-immediately-after-set-cookie-in-asp-net-core
+                    // else
                     rc = true;
                 }
             }

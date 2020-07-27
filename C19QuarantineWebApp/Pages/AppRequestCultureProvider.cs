@@ -16,7 +16,7 @@ namespace C19QuarantineWebApp.Pages
 
         public string UiCultureKey { get; set; } = "ui-culture";
 
-        private AppSupportedCultures _supportedCultures;
+        private readonly AppSupportedCultures _supportedCultures;
 
         public AppRequestCultureProvider(RequestLocalizationOptions options)
         {

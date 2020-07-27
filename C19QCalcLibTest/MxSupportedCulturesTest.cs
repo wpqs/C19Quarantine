@@ -75,6 +75,16 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
+        public void HasRegionTest()
+        {
+            Assert.False(MxSupportedCultures.HasRegion(null));
+            Assert.False(MxSupportedCultures.HasRegion(""));
+            Assert.False(MxSupportedCultures.HasRegion("fr-"));
+            Assert.False(MxSupportedCultures.HasRegion("fr"));
+            Assert.True(MxSupportedCultures.HasRegion("fr-C"));
+        }
+
+        [Fact]
         public void GetCulturesValueToSetFailTest()
         {
             var cultures = new AppSupportedCultures();

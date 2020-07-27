@@ -172,7 +172,7 @@ namespace C19QCalcLibTest
         [Fact]
         public void GetTextSimpleTest()
         {
-            var mockAccessor = (HttpContextAccessorMock)_lib.Cookies.Accessor;
+            var mockAccessor = (HttpContextAccessorMock)_lib.HttpContextAccessor;
             mockAccessor.AddCookie(".AspNetCore.Culture", "c=en-GB|uic=en-GB");
 
             Assert.Equal("Welcome - en-GB", _lib.GetText("Welcome"));
@@ -182,7 +182,7 @@ namespace C19QCalcLibTest
         [Fact]
         public void GetTextNotFoundFailTest()
         {
-            var mockAccessor = (HttpContextAccessorMock)_lib.Cookies.Accessor;
+            var mockAccessor = (HttpContextAccessorMock)_lib.HttpContextAccessor;
             mockAccessor.AddCookie(".AspNetCore.Culture", "c=en-GB|uic=en-GB");
 
             Assert.Equal("[Not Found]", _lib.GetText("WelcomeXXX"));

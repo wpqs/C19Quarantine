@@ -8,34 +8,37 @@ namespace C19QuarantineWebApp.Pages.Components.SettingsSummary
 {
     public class SettingsSummaryViewComponent : ViewComponent
     {
-        private readonly MxCookies _cookies;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly AppSupportedCultures _supportedCultures;
+        private readonly AppSupportedTimeZones _supportedTimeZones;
         public SettingsSummaryViewComponent(IHttpContextAccessor httpContextAccessor)
         {
-            _cookies = new MxCookies(httpContextAccessor);
+            _supportedCultures = new AppSupportedCultures();
+            _supportedTimeZones = new AppSupportedTimeZones();
+            _httpContextAccessor = httpContextAccessor;
         }
         public IViewComponentResult Invoke()
         {
             string text;
             try
             {
-                var supportedCultures = new AppSupportedCultures();
-                var supportedTimeZones = new AppSupportedTimeZones();
+                var cookies = new MxCookies(_httpContextAccessor);
 
-                var value = _cookies.GetValue(MxSupportedTimeZones.CookieName);
-                var timeZoneAcronym = supportedTimeZones.GetTimeZoneAcronym(value);
-                var withoutDaylightSaving = (!supportedTimeZones.IsDaylightSavingAuto(value));
+                var value = cookies.GetValue(MxSupportedTimeZones.CookieName);
+                var timeZoneAcronym = _supportedTimeZones.GetTimeZoneAcronym(value);
+                var withoutDaylightSaving = (!_supportedTimeZones.IsDaylightSavingAuto(value));
                 if (withoutDaylightSaving)
                     text = timeZoneAcronym;
                 else
                 {
-                    DateTimeZone zone = DateTimeZoneProviders.Tzdb[supportedTimeZones.GetTzDbName(timeZoneAcronym)];
+                    DateTimeZone zone = DateTimeZoneProviders.Tzdb[_supportedTimeZones.GetTzDbName(timeZoneAcronym)];
                     var daylightSavingNow = zone.IsDaylightSavingsTime(SystemClock.Instance.GetCurrentInstant());
-                    text = (daylightSavingNow) ? supportedTimeZones.GetDaylightSavingAcronym(timeZoneAcronym) : timeZoneAcronym;
+                    text = (daylightSavingNow) ? _supportedTimeZones.GetDaylightSavingAcronym(timeZoneAcronym) : timeZoneAcronym;
                 }
 
-                value = _cookies.GetValue(MxSupportedCultures.CookieName);
-                var culture = supportedCultures.GetCultureTab(value);
-                var uiCulture = supportedCultures.GetUiCultureTab(value);
+                value = cookies.GetValue(MxSupportedCultures.CookieName);
+                var culture = _supportedCultures.GetCultureTab(value);
+                var uiCulture = _supportedCultures.GetUiCultureTab(value);
                 text += ",c=";
                 text += culture;
                 text += "|uic=";

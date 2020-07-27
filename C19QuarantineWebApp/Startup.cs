@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using AppRequestCultureProvider = C19QuarantineWebApp.Pages.AppRequestCultureProvider;
 
 namespace C19QuarantineWebApp
@@ -70,12 +71,13 @@ namespace C19QuarantineWebApp
                 app.UseHsts();
             }
 
-            app.UseRequestLocalization();
-
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            var localizationOptions = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>().Value;
+            app.UseRequestLocalization(localizationOptions);
 
             app.UseAuthorization();
 

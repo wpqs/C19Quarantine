@@ -17,9 +17,9 @@ namespace C19QCalcLibTest
         public void Test()
         {
             var mockAccessor = (HttpContextAccessorMock) _cookies.Accessor;
-            mockAccessor.AddCookie(".AspNetCore.Culture", "c=en|uic=en-GB");
+            mockAccessor.AddCookie(".AspNetCore.Culture", "c=de-CH|uic=en-XX");
 
-            Assert.Equal("c=en|uic=en-GB", _cookies.GetValue(".AspNetCore.Culture"));
+            Assert.Equal("c=de-CH|uic=en-XX", _cookies.GetValue(".AspNetCore.Culture"));
 
         }
 

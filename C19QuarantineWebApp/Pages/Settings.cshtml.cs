@@ -7,12 +7,13 @@ namespace C19QuarantineWebApp.Pages
 {
     public class SettingsModel : PageModel
     {
-        private readonly MxCookies _cookies;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
         // ReSharper disable once UnusedAutoPropertyAccessor.Local
         public string ProgramError { get; private set; }
 
-        public AppSupportedCultures SupportedAppCultures { get; set; }
-        public AppSupportedTimeZones SupportedAppTimeZones { get; set; }
+        public AppSupportedCultures SupportedAppCultures { get; private set; }
+        public AppSupportedTimeZones SupportedAppTimeZones { get; private set; }
 
         [BindProperty]
         public bool WithoutDaylightSaving { get; set; }
@@ -25,27 +26,27 @@ namespace C19QuarantineWebApp.Pages
 
         public SettingsModel(IHttpContextAccessor httpContextAccessor)
         {
-            _cookies = new MxCookies(httpContextAccessor);
+            _httpContextAccessor = httpContextAccessor;
+            SupportedAppTimeZones = new AppSupportedTimeZones();
+            SupportedAppCultures = new AppSupportedCultures();
         }
 
         public void OnGet()
         {
-            SupportedAppTimeZones = new AppSupportedTimeZones();
+            var cookies = new MxCookies(_httpContextAccessor);
 
-            WithoutDaylightSaving = !SupportedAppTimeZones.IsDaylightSavingAuto(_cookies.GetValue(MxSupportedTimeZones.CookieName));
-            SelectedTimeZone = SupportedAppTimeZones.GetTimeZoneAcronym(_cookies.GetValue(MxSupportedTimeZones.CookieName));
-
-            SupportedAppCultures = new AppSupportedCultures();
-            SelectedCultureTab = SupportedAppCultures.GetCultureTab(_cookies.GetValue(MxSupportedCultures.CookieName));
+            WithoutDaylightSaving = !SupportedAppTimeZones.IsDaylightSavingAuto(cookies.GetValue(MxSupportedTimeZones.CookieName));
+            SelectedTimeZone = SupportedAppTimeZones.GetTimeZoneAcronym(cookies.GetValue(MxSupportedTimeZones.CookieName));
+            SelectedCultureTab = SupportedAppCultures.GetCultureTab(cookies.GetValue(MxSupportedCultures.CookieName));
         }
 
         public IActionResult OnPost()
         {
-            SupportedAppTimeZones = new AppSupportedTimeZones();
-            _cookies.SetValue(MxSupportedTimeZones.CookieName, SupportedAppTimeZones.GetTimeZoneEncodedValue(SelectedTimeZone, !WithoutDaylightSaving));
+            var cookies = new MxCookies(_httpContextAccessor);
+            cookies.SetValue(MxSupportedTimeZones.CookieName, SupportedAppTimeZones.GetTimeZoneEncodedValue(SelectedTimeZone, !WithoutDaylightSaving));
 
-             SupportedAppCultures = new AppSupportedCultures();
-            _cookies.SetValue(MxSupportedCultures.CookieName, SupportedAppCultures.GetCulturesEncodedValue(SelectedCultureTab, SelectedCultureTab));
+            var  culture = (MxSupportedCultures.HasRegion(SelectedCultureTab)) ? SelectedCultureTab  : SupportedAppCultures.GetNearestMatch(SelectedCultureTab);
+            cookies.SetValue(MxSupportedCultures.CookieName, SupportedAppCultures.GetCulturesEncodedValue(culture, SelectedCultureTab));
 
             return new RedirectToPageResult("Index");
         }

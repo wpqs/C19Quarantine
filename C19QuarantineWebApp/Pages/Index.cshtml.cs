@@ -11,7 +11,10 @@ namespace C19QuarantineWebApp.Pages
 {
     public class IndexModel : PageModel
     {
-        private readonly MxCookies _cookies;
+        //private readonly MxCookies _cookies;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly AppSupportedCultures _supportedCultures;
+        private readonly AppSupportedTimeZones _supportedTimeZones;
         public bool ShowRange { get; private set; }
         public int IsolationDaysMax { get; private set; }
         public int IsolationDaysRemaining { get; private set; }
@@ -39,8 +42,10 @@ namespace C19QuarantineWebApp.Pages
 
         public IndexModel(IHttpContextAccessor httpContextAccessor)
         {
-            _cookies = new MxCookies(httpContextAccessor);
-            _clock = SystemClock.Instance;
+           _supportedCultures = new AppSupportedCultures();
+           _supportedTimeZones = new AppSupportedTimeZones();
+           _httpContextAccessor = httpContextAccessor;
+           _clock = SystemClock.Instance;
         }
 
         public void OnGet()
@@ -133,14 +138,11 @@ namespace C19QuarantineWebApp.Pages
 
         private void InitialiseSettingsFromCookies()
         {
-            var supportedCultures = new AppSupportedCultures();
-            SelectedCultureTab = supportedCultures.GetCultureTab(_cookies.GetValue(MxSupportedCultures.CookieName)); 
-
-            var supportedTimeZones = new AppSupportedTimeZones();
-            SelectedTimeZone = supportedTimeZones.GetTimeZoneAcronym(_cookies.GetValue(MxSupportedTimeZones.CookieName));
-            WithoutDaylightSavings = supportedTimeZones.IsDaylightSavingAuto(_cookies.GetValue(MxSupportedTimeZones.CookieName));
-
-            SelectedTzDbName = supportedTimeZones.GetTzDbName(SelectedTimeZone);
+            var cookies = new MxCookies(_httpContextAccessor);
+            SelectedCultureTab = _supportedCultures.GetCultureTab(cookies.GetValue(MxSupportedCultures.CookieName)); 
+            SelectedTimeZone = _supportedTimeZones.GetTimeZoneAcronym(cookies.GetValue(MxSupportedTimeZones.CookieName));
+            WithoutDaylightSavings = _supportedTimeZones.IsDaylightSavingAuto(cookies.GetValue(MxSupportedTimeZones.CookieName));
+            SelectedTzDbName = _supportedTimeZones.GetTzDbName(SelectedTimeZone);
         }
     }
 }

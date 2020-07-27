@@ -21,7 +21,7 @@ namespace C19QCalcLibTest
         [Fact]
         public void GetTextTest()
         {
-            var mockAccessor = (HttpContextAccessorMock) _page.Cookies.Accessor;
+            var mockAccessor = (HttpContextAccessorMock)_page.HttpContextAccessor;
             mockAccessor.AddCookie(".AspNetCore.Culture", "c=en|uic=en-GB");
 
             Assert.Equal("Welcome - en-GB", _page.GetText("Welcome"));
@@ -36,7 +36,7 @@ namespace C19QCalcLibTest
         [Fact]
         public void InstantToStringTest()
         {
-            var mockAccessor = (HttpContextAccessorMock) _page.Cookies.Accessor;
+            var mockAccessor = (HttpContextAccessorMock)_page.HttpContextAccessor;
             mockAccessor.AddCookie(".AspNetCore.Culture", "c=en-GB|uic=en-GB");
             mockAccessor.AddCookie(".AspNetCore.MxTimeZone", "tz=GMT|dsa=yes");
 
@@ -58,7 +58,7 @@ namespace C19QCalcLibTest
         [Fact]
         public void ParseTimeDateTest()
         {
-            var mockAccessor = (HttpContextAccessorMock)_page.Cookies.Accessor;
+            var mockAccessor = (HttpContextAccessorMock)_page.HttpContextAccessor;
             mockAccessor.AddCookie(".AspNetCore.Culture", "c=en-GB|uic=en-GB");
             mockAccessor.AddCookie(".AspNetCore.MxTimeZone", "tz=GMT|dsa=yes");
 
