@@ -52,7 +52,7 @@ namespace C19QCalcLib
             var timeZoneKey = (valueIsCookie) ? CookieTimeZoneKey : QueryTimeZoneKey;
             var keySeparator = (valueIsCookie) ? CookieKeySeparator : QueryKeySeparator;
 
-            if (string.IsNullOrEmpty(encodedValue) == false)
+            if ((string.IsNullOrEmpty(encodedValue) == false) && (encodedValue.Equals(MxCookies.ErrorValue, StringComparison.InvariantCulture) == false))
             {
                 var start = encodedValue.IndexOf(timeZoneKey, StringComparison.Ordinal);
                 var end = encodedValue.IndexOf(keySeparator, StringComparison.Ordinal);
@@ -73,7 +73,7 @@ namespace C19QCalcLib
             var dsAutoKey = (valueIsCookie) ? CookieDsAutoKey : QueryDsAutoKey;
             var keySeparator = (valueIsCookie) ? CookieKeySeparator : QueryKeySeparator;
 
-            if (string.IsNullOrEmpty(encodedValue) == false)
+            if ((string.IsNullOrEmpty(encodedValue) == false) && (encodedValue.Equals(MxCookies.ErrorValue, StringComparison.InvariantCulture) == false))
             {
                 var key = keySeparator + dsAutoKey;
                 var start = encodedValue.IndexOf(key, StringComparison.Ordinal);

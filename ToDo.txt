@@ -1,9 +1,7 @@
 ToDo List
 =========
 
-1. Implement Noda time 
-
-2. Implement support for other countries, cultures and language
+1. Implement support for other countries, cultures and language
 	- USA
 	- France
 	- Germany
@@ -11,6 +9,6 @@ ToDo List
 	- Spain
 	- Portugal
 
-3. Implement other regulations other than NHS
+2. Implement other regulations other than NHS
 
 

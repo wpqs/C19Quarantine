@@ -68,7 +68,9 @@ namespace C19QCalcLib
             {
                 var cookies = new MxCookies(HttpContextAccessor);
                 if (SupportedCultures.IsSupported(cultureTab) == false)
+                {
                     cultureTab = SupportedCultures.GetCultureTab(cookies.GetValue(MxSupportedCultures.CookieName));
+                }
 
                 rc = timeInstant.ToString(cultureTab, DateTimeZoneProviders.Tzdb[SupportedTimeZones.GetTzDbName(cultureTab)]);
             }

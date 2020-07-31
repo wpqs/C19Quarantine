@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Resources;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using C19QCalcLib;
 using Microsoft.AspNetCore.Http;
@@ -31,7 +32,12 @@ namespace C19QuarantineWebApp.Pages
         [BindProperty, Required, Display(Name = "above"), StringLength(3, MinimumLength = 2)]
         public string HasSymptoms { get; set; }
 
+        [BindProperty]
+        public string SampleDateTime { get; set; }
+
         private IClock _clock;
+
+        private ResourceManager _rm;
 
         private string SelectedCultureTab { get; set; }
         private string SelectedTimeZone { get; set; }
@@ -42,7 +48,8 @@ namespace C19QuarantineWebApp.Pages
 
         public IndexModel(IHttpContextAccessor httpContextAccessor)
         {
-           _supportedCultures = new AppSupportedCultures();
+            _rm = null;
+            _supportedCultures = new AppSupportedCultures();
            _supportedTimeZones = new AppSupportedTimeZones();
            _httpContextAccessor = httpContextAccessor;
            _clock = SystemClock.Instance;
@@ -58,6 +65,7 @@ namespace C19QuarantineWebApp.Pages
             {
                 StartIsolation = _clock.GetCurrentInstant().ToString(SelectedCultureTab, DateTimeZoneProviders.Tzdb[SelectedTzDbName], WithoutDaylightSavings); 
                 ShowRange = false;
+                SampleDateTime = GetText("ExampleDateTime");
             }
             catch (Exception e)
             {
@@ -69,9 +77,12 @@ namespace C19QuarantineWebApp.Pages
         {
             IActionResult rc = Page();
 
+            SampleDateTime = GetText("ExampleDateTime");
+
             TextColor = "red";
             ShowRange = true;
             InitialiseSettingsFromCookies();
+
 
             var form = ProcessForm(SelectedTzDbName ?? AppSupportedTimeZones.DefaultTzDbName, SelectedCultureTab ?? AppSupportedCultures.DefaultTab);   //get time and culture from dropdowns on form
 
@@ -143,6 +154,40 @@ namespace C19QuarantineWebApp.Pages
             SelectedTimeZone = _supportedTimeZones.GetTimeZoneAcronym(cookies.GetValue(MxSupportedTimeZones.CookieName));
             WithoutDaylightSavings = _supportedTimeZones.IsDaylightSavingAuto(cookies.GetValue(MxSupportedTimeZones.CookieName));
             SelectedTzDbName = _supportedTimeZones.GetTzDbName(SelectedTimeZone);
+        }
+
+        public string GetText(string resourceName, string uiCultureTab = null, params Object[] list)
+        {
+            var rc = "[not found]";
+            try
+            {
+                if (_supportedCultures != null)
+                {
+                    if (_rm == null)
+                    {
+                        var asm = typeof(C19QCalcLib.C19QCalcLib).Assembly;
+                        var baseName = asm.GetName().Name + ".Properties.Resources";
+                        _rm = new ResourceManager(baseName, asm);
+                    }
+
+                    var cookies = new MxCookies(_httpContextAccessor);
+                    if (_supportedCultures.IsSupported(uiCultureTab) == false)
+                        uiCultureTab = _supportedCultures.GetUiCultureTab(cookies.GetValue(MxSupportedCultures.CookieName));
+                    var uiCultureInfo = _supportedCultures.GetCultureInfo(uiCultureTab);
+                    if (uiCultureInfo != null)
+                    {
+                        var res = _rm?.GetString(resourceName ?? "NotFound", uiCultureInfo) ?? "[Not Found]";
+                        rc = string.Format(uiCultureInfo, res, list);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                // ReSharper disable once UnusedVariable
+                var msg = e.Message;
+                //ignore
+            }
+            return rc;
         }
     }
 }

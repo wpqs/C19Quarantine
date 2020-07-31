@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ExampleDateTime" xml:space="preserve">
+    <value>in formato svizzero 24 ore come 31.07.2020 17:30</value>
+  </data>
   <data name="NotFound" xml:space="preserve">
     <value>Errore non trovato</value>
   </data>

@@ -61,6 +61,15 @@ namespace C19QCalcLib.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to in UK 12 hour format like 31-07-2020 5:30 PM.
+        /// </summary>
+        public static string ExampleDateTime {
+            get {
+                return ResourceManager.GetString("ExampleDateTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error: Not found - en.
         /// </summary>
         public static string NotFound {

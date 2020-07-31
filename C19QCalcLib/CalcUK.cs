@@ -5,7 +5,7 @@ namespace C19QCalcLib
     public class CalcUk : ICalc
     {
         private const int QuarantinePeriodNoSymptoms = 14;
-        private const int QuarantinePeriodWithSymptoms = 7;
+        private const int QuarantinePeriodWithSymptoms = 10;
 
         private readonly Duration _quarantineSpanNoSymptoms = Duration.FromDays(QuarantinePeriodNoSymptoms); 
         private readonly Duration _quarantineSpanWithSymptoms = Duration.FromDays(QuarantinePeriodWithSymptoms);

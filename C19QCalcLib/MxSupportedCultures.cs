@@ -66,7 +66,7 @@ namespace C19QCalcLib
         {
             var rc = GetCultureTabForNeutralCulture();
 
-            if (string.IsNullOrEmpty(encodedValue) == false)
+            if ((string.IsNullOrEmpty(encodedValue) == false) && (encodedValue.Equals(MxCookies.ErrorValue, StringComparison.InvariantCulture) == false))
             {
                 var cultureKey = (valueIsCookie) ? CookieCultureKey : QueryCultureKey;
                 var keySeparator = (valueIsCookie) ? CookieKeySeparator : QueryKeySeparator;
@@ -87,7 +87,7 @@ namespace C19QCalcLib
         {
             var rc = GetDefaultUiCultureTab();
 
-            if (string.IsNullOrEmpty(encodedValue) == false)
+            if ((string.IsNullOrEmpty(encodedValue) == false) && (encodedValue.Equals(MxCookies.ErrorValue, StringComparison.InvariantCulture) == false))
             {
                 var uiCultureKey = (valueIsCookie) ? CookieUiCultureKey : QueryUiCultureKey;
                 var keySeparator = (valueIsCookie) ? CookieKeySeparator : QueryKeySeparator;

@@ -48,7 +48,7 @@ namespace C19QCalcLibTest
             var fred = new IsolateRecord("Fred", startQuarantine, true);
             var calc = new CalcUk(fred);
 
-            Assert.Equal(Duration.FromDays(7), calc.GetIsolationRemaining(_clock.GetCurrentInstant())); //now same as startQuarantine
+            Assert.Equal(Duration.FromDays(10), calc.GetIsolationRemaining(_clock.GetCurrentInstant())); //now same as startQuarantine
         }
 
         [Fact]
@@ -60,7 +60,7 @@ namespace C19QCalcLibTest
             var fred = new IsolateRecord("Fred", startQuarantine, false, startFever);
             var calc = new CalcUk(fred);
 
-            Assert.Equal(Duration.FromHours((6 * 24) + 22), calc.GetIsolationRemaining(_clock.GetCurrentInstant())); //now 3 hours after startQuarantine and 2 hours after startFever
+            Assert.Equal(Duration.FromHours((9 * 24) + 22), calc.GetIsolationRemaining(_clock.GetCurrentInstant())); //now 3 hours after startQuarantine and 2 hours after startFever
         }
 
         [Fact]
@@ -72,7 +72,7 @@ namespace C19QCalcLibTest
             var fred = new IsolateRecord("Fred", startQuarantine, true, startFever);
             var calc = new CalcUk(fred);
 
-            Assert.Equal(Duration.FromHours((6 * 24) + 22), calc.GetIsolationRemaining(_clock.GetCurrentInstant())); //now 3 hours after startQuarantine and 2 hours after startFever
+            Assert.Equal(Duration.FromHours((9 * 24) + 22), calc.GetIsolationRemaining(_clock.GetCurrentInstant())); //now 3 hours after startQuarantine and 2 hours after startFever
         }
 
         [Fact]
@@ -115,7 +115,7 @@ namespace C19QCalcLibTest
         {
             var startQuarantine = _localClock.InZoneStrictly(_zoneGmt).ToInstant().Minus(Duration.FromTimeSpan(new TimeSpan(0, 0, 0, 1)));
             var startFever = startQuarantine;
-            var expected = Duration.FromTimeSpan(new TimeSpan(6, 23, 59, 59));
+            var expected = Duration.FromTimeSpan(new TimeSpan(9, 23, 59, 59));
 
             var fred = new IsolateRecord("Fred", startQuarantine, true, startFever);
             var calc = new CalcUk(fred);
@@ -129,7 +129,7 @@ namespace C19QCalcLibTest
         {
             var startQuarantine = _localClock.InZoneStrictly(_zoneGmt).ToInstant();
             var startFever = startQuarantine;
-            var expected = Duration.FromTimeSpan(new TimeSpan(7, 0, 0, 0));
+            var expected = Duration.FromTimeSpan(new TimeSpan(10, 0, 0, 0));
 
             var fred = new IsolateRecord("Fred", startQuarantine, true, startFever);
             var calc = new CalcUk(fred);
@@ -142,7 +142,7 @@ namespace C19QCalcLibTest
          {
              var startQuarantine = _localClock.InZoneStrictly(_zoneGmt).ToInstant().Minus(Duration.FromDays(1));
              var startFever = startQuarantine.Plus(Duration.FromDays(1));
-             var expected = Duration.FromTimeSpan(new TimeSpan(7, 0, 0, 0));
+             var expected = Duration.FromTimeSpan(new TimeSpan(10, 0, 0, 0));
 
              var fred = new IsolateRecord("Fred", startQuarantine, true, startFever);
              var calc = new CalcUk(fred);
@@ -155,7 +155,7 @@ namespace C19QCalcLibTest
         {
             var startQuarantine = _localClock.InZoneStrictly(_zoneGmt).ToInstant().Minus(Duration.FromDays(2));
             var startFever = startQuarantine.Plus(Duration.FromDays(2));
-            var expected = Duration.FromTimeSpan(new TimeSpan(7, 0, 0, 0));
+            var expected = Duration.FromTimeSpan(new TimeSpan(10, 0, 0, 0));
 
             var fred = new IsolateRecord("Fred", startQuarantine, true, startFever);
             var calc = new CalcUk(fred);
@@ -168,7 +168,7 @@ namespace C19QCalcLibTest
         {
             var startQuarantine = _localClock.InZoneStrictly(_zoneGmt).ToInstant().Minus(Duration.FromDays(13));
             var startFever = startQuarantine.Plus(Duration.FromDays(13));
-            var expected = Duration.FromTimeSpan(new TimeSpan(7, 0, 0, 0));
+            var expected = Duration.FromTimeSpan(new TimeSpan(10, 0, 0, 0));
 
             var fred = new IsolateRecord("Fred", startQuarantine, true, startFever);
             var calc = new CalcUk(fred);
@@ -181,7 +181,7 @@ namespace C19QCalcLibTest
         {
             var startQuarantine = _localClock.InZoneStrictly(_zoneGmt).ToInstant().Minus(Duration.FromDays(14));
             var startFever = startQuarantine.Plus(Duration.FromDays(14));
-            var expected = Duration.FromTimeSpan(new TimeSpan(7, 0, 0, 0));
+            var expected = Duration.FromTimeSpan(new TimeSpan(10, 0, 0, 0));
 
             var fred = new IsolateRecord("Fred", startQuarantine, true, startFever);
             var calc = new CalcUk(fred);

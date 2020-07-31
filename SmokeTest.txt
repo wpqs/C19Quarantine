@@ -32,15 +32,15 @@ Smoke Test - C19Quarantine
 	2		21-04-2020 2:43 PM	[empty]				no									7%		The time remaining for your self-isolation is 1 day
 	3		20-04-2020 2:50 PM	[empty]				no									0%		The time remaining for your self-isolation is less than an hour
 	4		20-04-2020 2:43 PM	[empty]				no									0%		Your self-isolation is now COMPLETE unless you have been advised otherwise
-	5		20-04-2020 2:50 PM	[empty]				yes			04-05-2020 2:43 PM		50%		The time remaining for your self-isolation is 7 days
-	6		04-05-2020 2:43 PM	[empty]				yes			04-05-2020 2:43 PM		50%		The time remaining for your self-isolation is 7 days
-	7		28-04-2020 2:43 PM	04-05-2020 2:43 PM	yes			04-05-2020 2:43 PM		50%		The time remaining for your self-isolation is 7 days
-	8		28-04-2020 2:43 PM	28-04-2020 2:43 PM	no			28-04-2020 2:43 PM		7%		The time remaining for your self-isolation is 1 day
-	9   	27-04-2020 2:53 PM	27-04-2020 2:53 PM	yes			27-04-2020 2:53 PM		7%		The time remaining for your self-isolation is 1 day
-	10		27-04-2020 2:43 PM 	27-04-2020 2:43 PM	no			27-04-2020 2:43 PM		0%		Your self-isolation is now COMPLETE unless you have been advised otherwise
-	11    	26-04-2020 2:43 PM	26-04-2020 2:43 PM	yes			26-04-2020 2:43 PM		7%		The time remaining for your self-isolation is 1 day
-	12    	25-04-2020 2:43 PM	26-04-2020 2:43 PM	yes			26-04-2020 2:43 PM		7%		The time remaining for your self-isolation is 1 day
-	13    	24-04-2020 2:43 PM	26-04-2020 2:43 PM	yes			26-04-2020 2:43 PM		7%		The time remaining for your self-isolation is 1 day
+	5		20-04-2020 2:50 PM	[empty]				yes			04-05-2020 2:43 PM		71%		The time remaining for your self-isolation is 10 days
+	6		04-05-2020 2:43 PM	[empty]				yes			04-05-2020 2:43 PM		71%		The time remaining for your self-isolation is 10 days
+	7		28-04-2020 2:43 PM	04-05-2020 2:43 PM	yes			04-05-2020 2:43 PM		71%		The time remaining for your self-isolation is 10 days
+	8		25-04-2020 2:43 PM	25-04-2020 2:43 PM	no			25-04-2020 2:43 PM		7%		The time remaining for your self-isolation is 1 day
+	9   	24-04-2020 2:53 PM	24-04-2020 2:53 PM	yes			24-04-2020 2:53 PM		7%		The time remaining for your self-isolation is 1 day
+	10		24-04-2020 2:43 PM 	24-04-2020 2:43 PM	no			27-04-2020 2:43 PM		0%		Your self-isolation is now COMPLETE unless you have been advised otherwise
+	11    	23-04-2020 2:43 PM	23-04-2020 2:43 PM	yes			26-04-2020 2:43 PM		7%		The time remaining for your self-isolation is 1 day
+	12    	22-04-2020 2:43 PM	23-04-2020 2:43 PM	yes			26-04-2020 2:43 PM		7%		The time remaining for your self-isolation is 1 day
+	13    	21-04-2020 2:43 PM	23-04-2020 2:43 PM	yes			26-04-2020 2:43 PM		7%		The time remaining for your self-isolation is 1 day
 	14		21-04-2020 2:43 PM	21-04-2020 2:43 PM	yes			21-04-2020 2:43 PM		7%		The time remaining for your self-isolation is 1 day
 
 			error reporting

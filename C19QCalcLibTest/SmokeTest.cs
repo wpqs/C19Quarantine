@@ -64,7 +64,7 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void NoSymptoms14DaysTest() //Ref# 1
+        public void Ref1NoSymptoms14DaysTest() //Ref# 1
         {
             Instant startIsolation = new LocalDateTime(2020, 05, 04, 14, 43, 00).InZoneStrictly(_zoneGmt).ToInstant();
             var stillHasSymptoms = "no";
@@ -90,7 +90,7 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void NoSymptoms1DayTest() //Ref# 2
+        public void Ref2NoSymptoms1DayTest() //Ref# 2
         {
             Instant startIsolation = new LocalDateTime(2020, 04, 21, 14, 43, 00 ).InZoneStrictly(_zoneGmt).ToInstant();
             var stillHasSymptoms = "no";
@@ -116,7 +116,7 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void NoSymptomsLessHourTest() //Ref# 3
+        public void Ref3NoSymptomsLessHourTest() //Ref# 3
         {
             Instant startIsolation = new LocalDateTime(2020, 04, 20, 14, 50, 00).InZoneStrictly(_zoneGmt).ToInstant();
             var stillHasSymptoms = "no";
@@ -142,7 +142,7 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void NoSymptomsDoneTest()  //Ref# 4
+        public void Ref4NoSymptomsDoneTest()  //Ref# 4
         {
             Instant startIsolation = new LocalDateTime(2020, 04, 20, 14, 43, 00).InZoneStrictly(_zoneGmt).ToInstant();
             var stillHasSymptoms = "no";
@@ -168,15 +168,15 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void SymptomsAfter7DaysTest()  //Ref# 5
+        public void Ref5SymptomsAfter7DaysTest()  //Ref# 5
         {
             var startIsolation = new LocalDateTime(2020, 04, 20, 14, 50, 00).InZoneStrictly(_zoneGmt).ToInstant();
             var stillHasSymptoms = "yes";
 
-            var resultDaysRemaining = 7;
+            var resultDaysRemaining = 10;
             var resultComment = $"The time remaining for your self-isolation is {resultDaysRemaining} days";
             var resultColor = colorNotDone;
-            var resultSlider = 0.5;
+            var resultSlider = 0.71;
 
             var form = GetForm(cultureTagDefault, timeZoneAcronymDefault, false, stillHasSymptoms, startIsolation.ToString(cultureTagDefault, _zoneGmt), null, out var errors);
             Assert.NotNull(errors);
@@ -194,15 +194,15 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void SymptomsNowTest()       //Ref# 6
+        public void Ref6SymptomsNowTest()       //Ref# 6
         {
             var startIsolation = new LocalDateTime(2020, 05, 4, 14, 43, 00).InZoneStrictly(_zoneGmt).ToInstant();
             var stillHasSymptoms = "yes";
 
-            var resultDaysRemaining = 7;
+            var resultDaysRemaining = 10;
             var resultComment = $"The time remaining for your self-isolation is {resultDaysRemaining} days";
             var resultColor = colorNotDone;
-            var resultSlider = 0.5;
+            var resultSlider = 0.71;
 
             var form = GetForm(cultureTagDefault, timeZoneAcronymDefault, false, stillHasSymptoms, startIsolation.ToString(cultureTagDefault, _zoneGmt), null, out var errors);
             Assert.NotNull(errors);
@@ -219,17 +219,17 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void SymptomsNowAfter6DaysTest() //Ref# 7
+        public void Ref7SymptomsNowAfter6DaysTest() //Ref# 7
         {
             var startIsolation = new LocalDateTime(2020, 04, 28, 14, 43, 00).InZoneStrictly(_zoneGmt).ToInstant();
             var startSymptoms = _clock.GetCurrentInstant();
             var stillHasSymptoms = "yes";
 
             string resultSymptoms = _clock.GetCurrentInstant().ToString(cultureTagDefault, _zoneGmt);
-            var resultDaysRemaining = 7;
+            var resultDaysRemaining = 10;
             var resultComment = $"The time remaining for your self-isolation is {resultDaysRemaining} days";
             var resultColor = colorNotDone;
-            var resultSlider = 0.5;
+            var resultSlider = 0.71;
 
             var form = GetForm(cultureTagDefault, timeZoneAcronymDefault, false, stillHasSymptoms, startIsolation.ToString(cultureTagDefault, _zoneGmt), startSymptoms.ToString(cultureTagDefault, _zoneGmt), out var errors);
             Assert.NotNull(errors);
@@ -248,10 +248,10 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void SymptomsAtStartNoneAfter6DaysTest() //Ref# 8
+        public void Ref8SymptomsAtStartNoneAfter6DaysTest() //Ref# 8
         {
-            var startIsolation = new LocalDateTime(2020, 04, 28, 14, 43, 00).InZoneStrictly(_zoneGmt).ToInstant();
-            var startSymptoms = new LocalDateTime(2020, 04, 28, 14, 43, 00).InZoneStrictly(_zoneGmt).ToInstant();
+            var startIsolation = new LocalDateTime(2020, 04, 25, 14, 43, 00).InZoneStrictly(_zoneGmt).ToInstant();
+            var startSymptoms = new LocalDateTime(2020, 04, 25, 14, 43, 00).InZoneStrictly(_zoneGmt).ToInstant();
 
             var stillHasSymptoms = "no";
 
@@ -278,10 +278,10 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void SymptomsAtStartStillAfter6DaysTest()    //Ref# 9
+        public void Ref9SymptomsAtStartStillAfter6DaysTest()    //Ref# 9
         {
-            var startIsolation = new LocalDateTime(2020, 04, 27, 14, 53, 00).InZoneStrictly(_zoneGmt).ToInstant();
-            var startSymptoms = new LocalDateTime(2020, 04, 27, 14, 53, 00).InZoneStrictly(_zoneGmt).ToInstant();
+            var startIsolation = new LocalDateTime(2020, 04, 24, 14, 53, 00).InZoneStrictly(_zoneGmt).ToInstant();
+            var startSymptoms = new LocalDateTime(2020, 04, 24, 14, 53, 00).InZoneStrictly(_zoneGmt).ToInstant();
 
             var stillHasSymptoms = "yes";
 
@@ -308,10 +308,10 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void SymptomsAtStartDoneAfter7DaysTest()    //Ref# 10
+        public void Ref10SymptomsAtStartDoneAfter7DaysTest()    //Ref# 10
         {
-            var startIsolation = new LocalDateTime(2020, 04, 27, 14, 43, 00).InZoneStrictly(_zoneGmt).ToInstant();
-            var startSymptoms = new LocalDateTime(2020, 04, 27, 14, 43, 00).InZoneStrictly(_zoneGmt).ToInstant();
+            var startIsolation = new LocalDateTime(2020, 04, 24, 14, 43, 00).InZoneStrictly(_zoneGmt).ToInstant();
+            var startSymptoms = new LocalDateTime(2020, 04, 24, 14, 43, 00).InZoneStrictly(_zoneGmt).ToInstant();
 
             var stillHasSymptoms = "no";
 
@@ -338,10 +338,10 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void SymptomsAtStart26042020Test()    //Ref# 11
+        public void Ref11SymptomsAtStart26042020Test()    //Ref# 11
         {
-            var startIsolation = new LocalDateTime(2020, 04, 26, 14, 43, 00).InZoneStrictly(_zoneGmt).ToInstant();
-            var startSymptoms = new LocalDateTime(2020, 04, 26, 14, 43, 00).InZoneStrictly(_zoneGmt).ToInstant();
+            var startIsolation = new LocalDateTime(2020, 04, 23, 14, 43, 00).InZoneStrictly(_zoneGmt).ToInstant();
+            var startSymptoms = new LocalDateTime(2020, 04, 23, 14, 43, 00).InZoneStrictly(_zoneGmt).ToInstant();
 
             var stillHasSymptoms = "yes";
 
@@ -368,10 +368,10 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void SymptomsAtStart25042020Test()    //Ref# 12
+        public void Ref12SymptomsAtStart25042020Test()    //Ref# 12
         {
-            var startIsolation = new LocalDateTime(2020, 04, 25, 14, 43, 00).InZoneStrictly(_zoneGmt).ToInstant();
-            var startSymptoms = new LocalDateTime(2020, 04, 26, 14, 43, 00).InZoneStrictly(_zoneGmt).ToInstant();
+            var startIsolation = new LocalDateTime(2020, 04, 22, 14, 43, 00).InZoneStrictly(_zoneGmt).ToInstant();
+            var startSymptoms = new LocalDateTime(2020, 04, 23, 14, 43, 00).InZoneStrictly(_zoneGmt).ToInstant();
 
             var stillHasSymptoms = "yes";
 
@@ -398,10 +398,10 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void SymptomsAtStart24042020Test()    //Ref# 13
+        public void Ref13SymptomsAtStart24042020Test()    //Ref# 13
         {
-            var startIsolation = new LocalDateTime(2020, 04, 24, 14, 43, 00).InZoneStrictly(_zoneGmt).ToInstant();
-            var startSymptoms = new LocalDateTime(2020, 04, 26, 14, 43, 00).InZoneStrictly(_zoneGmt).ToInstant();
+            var startIsolation = new LocalDateTime(2020, 04, 21, 14, 43, 00).InZoneStrictly(_zoneGmt).ToInstant();
+            var startSymptoms = new LocalDateTime(2020, 04, 23, 14, 43, 00).InZoneStrictly(_zoneGmt).ToInstant();
 
             var stillHasSymptoms = "yes";
 
@@ -428,7 +428,7 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void SymptomsAtStart21042020Test()    //Ref# 14
+        public void Ref14SymptomsAtStart21042020Test()    //Ref# 14
         {
             var startIsolation = new LocalDateTime(2020, 04, 21, 14, 43, 00).InZoneStrictly(_zoneGmt).ToInstant();
             var startSymptoms = new LocalDateTime(2020, 04, 21, 14, 43, 00).InZoneStrictly(_zoneGmt).ToInstant();
@@ -458,7 +458,7 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void InvalidYearStartIsolationFailTest()    //Ref# 15
+        public void Ref15InvalidYearStartIsolationFailTest()    //Ref# 15
         {
             var startIsolation = "04-05-20 2:43 PM";
             var stillHasSymptoms = "no";
@@ -472,7 +472,7 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void InvalidPMStartIsolationFailTest()    //Ref# 16
+        public void Ref16InvalidPMStartIsolationFailTest()    //Ref# 16
         {
             var startIsolation = "04-05-2020 2:43 XM";
             var stillHasSymptoms = "no";
@@ -486,7 +486,7 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void InvalidPMStartSymptomsFailTest()    //Ref# 17
+        public void Ref17InvalidPMStartSymptomsFailTest()    //Ref# 17
         {
             var startIsolation = "04-05-2020 2:43 PM";
             var startSymptoms = "04-05-2020 2:43 XM";
@@ -502,7 +502,7 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void StartIsolationAfterNowFailTest()    //Ref# 18
+        public void Ref18StartIsolationAfterNowFailTest()    //Ref# 18
         {
             var startIsolation = "04-05-2020 2:50 PM";
             var stillHasSymptoms = "no";
@@ -516,7 +516,7 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void StartSymptomsAfterNowFailTest()    //Ref# 19
+        public void Ref19StartSymptomsAfterNowFailTest()    //Ref# 19
         {
             var startIsolation = "04-05-2020 2:43 PM";
             var startSymptoms = "04-05-2020 2:50 PM";
@@ -532,7 +532,7 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void StartIsolationAfterStartSymptomsFailTest()    //Ref# 20
+        public void Ref20StartIsolationAfterStartSymptomsFailTest()    //Ref# 20
         {
             var startIsolation = "04-05-2020 2:43 PM";
             var startSymptoms = "04-05-2020 2:41 PM";
@@ -548,7 +548,7 @@ namespace C19QCalcLibTest
         }
 
         [Fact]
-        public void MultiFailTest()    //Ref# 21
+        public void Ref21MultiFailTest()    //Ref# 21
         {
             var startIsolation = "04-05-2020 2:50 PM";
             var startSymptoms = "04-05-2020 2:43 PM";
